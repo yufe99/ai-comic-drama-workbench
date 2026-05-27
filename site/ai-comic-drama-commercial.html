@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI短剧工作台</title>
+    <link rel="stylesheet" href="./ai-comic-drama-commercial.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="side-nav">
+        <div class="brand">
+          <span class="brand-mark">剧</span>
+          <div>
+            <strong>AI短剧工作台</strong>
+            <small>充值后解锁生成</small>
+          </div>
+        </div>
+
+        <div class="nav-group">
+          <p class="group-label">创作生产</p>
+          <button class="nav-item active" data-view="dashboard">项目</button>
+          <button class="nav-item" data-view="styles">风格</button>
+          <button class="nav-item" data-view="models">模型</button>
+          <button class="nav-item" data-view="script">剧本</button>
+          <button class="nav-item" data-view="assets">资产</button>
+          <button class="nav-item" data-view="storyboard">故事板</button>
+          <button class="nav-item" data-view="generation">生成</button>
+          <button class="nav-item" data-view="settings">设置</button>
+        </div>
+
+        <div class="side-foot">
+          <div class="wallet-card">
+            <span data-bind="accountState">未充值</span>
+            <strong data-bind="walletBalance">0 创作点</strong>
+            <small data-bind="accountHint">只能查看示例</small>
+          </div>
+          <button class="primary full" id="rechargeButton">充值解锁</button>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Commercial Preview</p>
+            <h1 id="viewTitle">项目</h1>
+            <p id="viewSubtitle">未充值可查看示例，充值后才能导入剧本和提交生成。</p>
+          </div>
+          <div class="top-actions">
+            <button class="secondary locked-action" data-locked-action>导入剧本</button>
+            <button class="secondary">查看示例</button>
+            <button class="primary locked-action" data-open-submit>提交生成</button>
+          </div>
+        </header>
+
+        <section class="gate-banner" id="gateBanner">
+          <div>
+            <strong>当前为展示模式</strong>
+            <span>充值后解锁项目创建、剧本导入、故事板生成、视频生成和导出。</span>
+          </div>
+          <button class="primary" data-open-recharge>立即充值</button>
+        </section>
+
+        <section class="view active" data-view-panel="dashboard">
+          <section class="hero-grid">
+            <article class="hero-panel">
+              <div class="hero-head">
+                <div>
+                  <p class="section-kicker">项目概况</p>
+                  <h2>心动频率 · 都市短剧</h2>
+                  <p>当前项目统一使用一个视频模型和一个片段时长，整集分镜、故事板和提交任务都跟着它走。</p>
+                </div>
+                <span class="status-badge" data-bind="accountState">未充值</span>
+              </div>
+              <div class="overview-grid">
+                <div><span>总集数</span><strong>20 集</strong></div>
+                <div><span>已拆片段</span><strong>286 段</strong></div>
+                <div><span>待返修</span><strong>17 段</strong></div>
+                <div><span>当前模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
+                <div><span>统一时长</span><strong data-bind="currentDurationText">12秒</strong></div>
+                <div><span>提交后余额</span><strong data-bind="remainingBalance">0 创作点</strong></div>
+              </div>
+            </article>
+
+            <article class="hero-panel">
+              <div class="panel-head">
+                <div>
+                  <h2>当前配置</h2>
+                  <p>视频模型一旦选定，分段和故事板就统一按这个时长执行。</p>
+                </div>
+              </div>
+              <div class="stack-list">
+                <div class="price-line"><span>语言模型</span><strong data-bind="selectedTextModel">GPT-4.1</strong></div>
+                <div class="price-line"><span>图片模型</span><strong data-bind="selectedImageModel">Nana Banana 2</strong></div>
+                <div class="price-line"><span>视频模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
+                <div class="price-line"><span>片段模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
+              </div>
+            </article>
+          </section>
+
+          <section class="metric-row">
+            <article><span>预计片段</span><strong data-bind="selectedSegmentCount">24 段</strong></article>
+            <article><span>视频套餐</span><strong data-bind="currentDurationText">12秒</strong></article>
+            <article><span>预计消耗</span><strong data-bind="estimatedCost">3,600 点</strong></article>
+            <article><span>余额</span><strong data-bind="walletBalance">0 创作点</strong></article>
+            <article><span>状态</span><strong data-bind="accountHint">只能查看示例</strong></article>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="styles">
+          <section class="content-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>风格路线</h2>
+                  <p>先定风格，再锁人脸、场景和镜头基调。</p>
+                </div>
+              </div>
+              <div class="style-route-grid" id="styleRouteGrid">
+                <button class="style-route selected" data-style-route="live_action_drama" type="button">
+                  <strong>真人短剧</strong>
+                  <span>都市 / 悬疑 / 职场</span>
+                  <small>真人人脸一致性最严。</small>
+                </button>
+                <button class="style-route" data-style-route="live_action_stylized" type="button">
+                  <strong>真人感漫剧</strong>
+                  <span>真人比例 + 漫画渲染</span>
+                  <small>适合商用批量生产。</small>
+                </button>
+                <button class="style-route" data-style-route="comic_2_5d" type="button">
+                  <strong>2.5D 漫剧</strong>
+                  <span>小说改编 / 竖屏连载</span>
+                  <small>人物和画风稳定优先。</small>
+                </button>
+                <button class="style-route" data-style-route="chinese_animation_cinematic" type="button">
+                  <strong>国漫电影感</strong>
+                  <span>古风 / 玄幻 / 仙侠</span>
+                  <small>镜头运动和特效更强。</small>
+                </button>
+                <button class="style-route" data-style-route="anime_manhwa" type="button">
+                  <strong>日漫 / 韩漫风</strong>
+                  <span>甜宠 / 校园 / 恋爱</span>
+                  <small>表情和节奏优先。</small>
+                </button>
+                <button class="style-route" data-style-route="ad_drama" type="button">
+                  <strong>广告剧情</strong>
+                  <span>产品植入 / 口播剧情</span>
+                  <small>文案和品牌准确优先。</small>
+                </button>
+              </div>
+            </article>
+
+            <aside class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>路线摘要</h2>
+                  <p>当前风格会影响角色、人脸和故事板模板。</p>
+                </div>
+              </div>
+              <div class="config-stack">
+                <div><span>风格路线</span><strong data-bind="styleRouteName">真人感漫剧</strong></div>
+                <div><span>人脸来源</span><strong data-bind="recommendedFaceSource">外部真人人脸</strong></div>
+                <div><span>一致性</span><strong data-bind="consistencyLevel">严格</strong></div>
+                <div><span>台词模式</span><strong data-bind="dialogueMode">口型同步</strong></div>
+              </div>
+            </aside>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="models">
+          <section class="content-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>模型</h2>
+                  <p>视频模型选一次，整部短剧就统一按这个时长跑。</p>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <label class="field">
+                  <span>语言模型</span>
+                  <select id="textModelSelect">
+                    <option value="DeepSeek">DeepSeek</option>
+                    <option value="智谱 GLM">智谱 GLM</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>图片模型</span>
+                  <select id="imageModelSelect">
+                    <option value="GPT Image2">GPT Image2</option>
+                    <option value="Nana Banana 2">Nana Banana 2</option>
+                    <option value="Nana Banana Pro">Nana Banana Pro</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="model-matrix compact">
+                <button class="model-card selectable selected" data-model-select="Sora2" type="button">
+                  <strong>Sora2</strong>
+                  <span>12 秒统一分段</span>
+                  <small>150 点 / 段。</small>
+                </button>
+                <button class="model-card selectable" data-model-select="Seedance2" type="button">
+                  <strong>Seedance 2.0</strong>
+                  <span>15 秒统一分段</span>
+                  <small>1800 点 / 段。</small>
+                </button>
+              </div>
+            </article>
+
+            <aside class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>当前选择</h2>
+                  <p>所有片段都复用这个模型和时长。</p>
+                </div>
+              </div>
+              <div class="config-stack">
+                <div><span>语言模型</span><strong data-bind="selectedTextModel">DeepSeek</strong></div>
+                <div><span>图片模型</span><strong data-bind="selectedImageModel">GPT Image2</strong></div>
+                <div><span>视频模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
+                <div><span>统一时长</span><strong data-bind="currentDurationText">12秒</strong></div>
+                <div><span>故事板模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
+              </div>
+            </aside>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="script">
+          <section class="split-layout">
+            <article class="panel script-editor">
+              <div class="panel-head">
+                <div>
+                  <h2>剧本分段</h2>
+                  <p>按当前视频模型的统一时长切分，所有镜头都沿用同一套模型。</p>
+                </div>
+                <button class="secondary locked-action" id="refreshSegments" data-locked-action>重新分段</button>
+              </div>
+              <textarea id="scriptInput" readonly>女主带着偷拍视频冲进发布会后台，想在总裁宣布订婚前揭穿真相。男主先一步拦住她，低声说证据还缺最后一环。女二从红毯回眸，看见他们并误会两人联手。保镖逼近，男主拉女主转身进入消防通道。女主压低声音：你到底帮我，还是在拖我？</textarea>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>分段结果</h2>
+                  <p>当前项目所有段都跟随同一个视频模型。</p>
+                </div>
+              </div>
+              <div class="config-stack">
+                <div><span>当前模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
+                <div><span>统一时长</span><strong data-bind="currentDurationText">12秒</strong></div>
+                <div><span>故事板模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
+              </div>
+              <div class="segment-list">
+                <div class="segment active">
+                  <strong data-bind="segmentA">EP01-S01 · Sora2 · 12s · 4 CUT</strong>
+                  <span data-bind="segmentADesc">女主冲后台，男主拦截，女二误会，最后转入消防通道收钩子。</span>
+                </div>
+                <div class="segment">
+                  <strong data-bind="segmentB">EP01-S02 · Sora2 · 12s · 4 CUT</strong>
+                  <span data-bind="segmentBDesc">男主解释证据缺口，女主不信，保镖追近，关系继续拉扯。</span>
+                </div>
+                <div class="segment">
+                  <strong data-bind="segmentC">EP01-S03 · Sora2 · 12s · 4 CUT</strong>
+                  <span data-bind="segmentCDesc">女二误会升级，媒体冲来，男主决定当场反转。</span>
+                </div>
+              </div>
+            </article>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="assets">
+          <section class="content-grid two-up">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>全剧资产</h2>
+                  <p>多人角色、场景、道具和色卡统一继承。</p>
+                </div>
+              </div>
+              <div class="bible-grid">
+                <div><strong>Cast</strong><p>女主、男主、女二、保镖、媒体群演。</p></div>
+                <div><strong>Location</strong><p>发布会、红毯、后台、消防通道、电梯厅。</p></div>
+                <div><strong>Prop</strong><p>偷拍视频手机、邀请函、耳机、门禁卡。</p></div>
+                <div><strong>Style</strong><p>黑金都市夜景、冷白高反差边光。</p></div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>多人角色</h2>
+                  <p>防串脸、防错台词。</p>
+                </div>
+              </div>
+              <div class="character-list">
+                <div><span class="avatar female"></span><strong>女主 · 苏晚</strong><small>长黑发、风衣、急促语速。</small></div>
+                <div><span class="avatar male"></span><strong>男主 · 顾承</strong><small>深灰西装、低沉声线。</small></div>
+                <div><span class="avatar villain"></span><strong>女二 · 林薇</strong><small>红裙、高跟鞋、锋利眼妆。</small></div>
+              </div>
+            </article>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="storyboard">
+          <section class="storyboard-workbench">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>故事板</h2>
+                  <p>CUT、台词归属、音效和道具引用直接放进板里。</p>
+                </div>
+                <button class="primary locked-action" data-locked-action>导出 PNG</button>
+              </div>
+
+              <div class="storyboard-meta">
+                <div><span>当前模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
+                <div><span>统一时长</span><strong data-bind="currentDurationText">12秒</strong></div>
+                <div><span>模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
+              </div>
+
+              <div class="storyboard-canvas">
+                <div class="cut-tile">
+                  <header data-bind="cut1Title">CUT 1 · 00:00-00:03</header>
+                  <p data-bind="cut1Body">女主推门闯入后台，手机里的偷拍视频掠过画面。</p>
+                  <small data-bind="cut1Note">台词：无。音效：门响。</small>
+                </div>
+                <div class="cut-tile">
+                  <header data-bind="cut2Title">CUT 2 · 00:03-00:06</header>
+                  <p data-bind="cut2Body">男主拦住她，低声说“还差最后一环”。</p>
+                  <small data-bind="cut2Note">台词归属：男主。</small>
+                </div>
+                <div class="cut-tile">
+                  <header data-bind="cut3Title">CUT 3 · 00:06-00:09</header>
+                  <p data-bind="cut3Body">女二回眸看到两人对峙，误会加深。</p>
+                  <small data-bind="cut3Note">人物：女二入镜。</small>
+                </div>
+                <div class="cut-tile">
+                  <header data-bind="cut4Title">CUT 4 · 00:09-00:12</header>
+                  <p data-bind="cut4Body">保镖逼近，男主拉女主进入消防通道，留下反问钩子。</p>
+                  <small data-bind="cut4Note">钩子 CUT。</small>
+                </div>
+              </div>
+            </article>
+
+            <aside class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>模板</h2>
+                  <p>按时长自动切换。</p>
+                </div>
+              </div>
+              <div class="input-stack">
+                <div data-bind="templateLine1">Sora2 · 12s：4 CUT 时间线</div>
+                <div data-bind="templateLine2">Seedance 2.0 · 15s：4 CUT 丰富板</div>
+              </div>
+            </aside>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="generation">
+          <section class="content-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>生成</h2>
+                  <p>当前项目所有片段都用同一个视频模型与统一时长。</p>
+                </div>
+                <button class="primary locked-action" data-open-submit>提交生成</button>
+              </div>
+
+              <div class="model-matrix">
+                <button class="model-card selectable selected" data-model-select="Sora2" type="button">
+                  <strong>Sora2</strong>
+                  <span>12 秒统一分段</span>
+                </button>
+                <button class="model-card selectable" data-model-select="Seedance2" type="button">
+                  <strong>Seedance 2.0</strong>
+                  <span>15 秒统一分段</span>
+                </button>
+              </div>
+
+              <div class="model-guard compact">
+                <strong>Seedance 2.0 人脸适配</strong>
+                <div class="guard-actions">
+                  <button class="secondary locked-action" id="consentAction" data-locked-action>授权</button>
+                  <button class="secondary locked-action" id="probeAction" data-locked-action>探测</button>
+                  <button class="secondary locked-action" id="assetAction" data-locked-action>专用脸</button>
+                  <button class="secondary" id="fallbackAction">兜底</button>
+                </div>
+              </div>
+            </article>
+
+            <aside class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>提交摘要</h2>
+                  <p>充值后才可提交。</p>
+                </div>
+              </div>
+              <div class="billing-box">
+                <div class="bill-line"><span>模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
+                <div class="bill-line"><span>时长</span><strong data-bind="currentDurationText">12秒</strong></div>
+                <div class="bill-line"><span>预计消耗</span><strong data-bind="estimatedCost">3,600 点</strong></div>
+                <div class="bill-line"><span>提交后余额</span><strong data-bind="remainingBalance">0 创作点</strong></div>
+              </div>
+            </aside>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="settings">
+          <section class="content-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>项目设置</h2>
+                  <p>存储规则会自动应用到项目素材和生成结果。</p>
+                </div>
+                <button class="secondary locked-action" data-locked-action>一键清理测试版本</button>
+              </div>
+
+              <div class="storage-meter">
+                <div class="meter-head">
+                  <span>项目存储</span>
+                  <strong>2.8 GB / 10 GB</strong>
+                </div>
+                <div class="meter-bar"><span style="width: 28%"></span></div>
+              </div>
+
+              <div class="storage-grid">
+                <div><span>主资产</span><strong>长期保留</strong><small>角色、场景、道具、主故事板</small></div>
+                <div><span>故事板草稿</span><strong>7 天</strong><small>过期后自动清理</small></div>
+                <div><span>未选测试视频</span><strong>15 天</strong><small>优先释放空间</small></div>
+                <div><span>已通过质检片段</span><strong>30 天</strong><small>未进入粗剪前限时保留</small></div>
+                <div><span>审计记录</span><strong>长期保留</strong><small>充值、扣费、模型调用记录</small></div>
+                <div><span>失败任务文件</span><strong>每日清理</strong><small>后台自动处理</small></div>
+              </div>
+            </article>
+
+            <aside class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>清理队列</h2>
+                  <p>不影响主版本和法务记录。</p>
+                </div>
+              </div>
+              <div class="config-stack">
+                <div><span>失败任务中间文件</span><strong>126 MB</strong></div>
+                <div><span>未选测试视频</span><strong>1.4 GB</strong></div>
+                <div><span>故事板草稿</span><strong>320 MB</strong></div>
+                <div><span>临时导出文件</span><strong>480 MB</strong></div>
+              </div>
+            </aside>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop hidden" id="submitModal">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Submit</p>
+            <h2>提交确认</h2>
+          </div>
+          <button class="icon-button" id="closeModal" type="button">×</button>
+        </div>
+
+        <div class="modal-summary">
+          <div><span>风格</span><strong data-bind="styleRouteName">真人感漫剧</strong></div>
+          <div><span>语言模型</span><strong data-bind="selectedTextModel">DeepSeek</strong></div>
+          <div><span>图片模型</span><strong data-bind="selectedImageModel">GPT Image2</strong></div>
+          <div><span>视频模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
+          <div><span>时长</span><strong data-bind="currentDurationText">12秒</strong></div>
+          <div><span>模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
+          <div><span>预计消耗</span><strong data-bind="estimatedCost">3,600 点</strong></div>
+          <div><span>提交后余额</span><strong data-bind="remainingBalance">0 创作点</strong></div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary" id="cancelSubmit" type="button">返回修改</button>
+          <button class="primary" id="confirmSubmit" type="button">确认提交</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop hidden" id="rechargeModal">
+      <div class="modal recharge-modal">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Recharge</p>
+            <h2>充值解锁生成</h2>
+          </div>
+          <button class="icon-button" id="closeRechargeModal" type="button">×</button>
+        </div>
+
+        <div class="recharge-layout">
+          <div class="qr-box">
+            <div class="fake-qr">微信<br />收款码</div>
+            <small>正式版替换为真实收款二维码</small>
+          </div>
+          <div class="config-stack">
+            <div><span>推荐充值</span><strong>100 元 = 10,000 点</strong></div>
+            <div><span>Sora2</span><strong>150 点 / 段</strong></div>
+            <div><span>Seedance 2.0</span><strong>1800 点 / 段</strong></div>
+            <div><span>到账方式</span><strong>后台审核后加点</strong></div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary" id="cancelRecharge" type="button">稍后再说</button>
+          <button class="primary" id="simulateRecharge" type="button">模拟已充值</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./ai-comic-drama-commercial.js"></script>
+  </body>
+</html>
