@@ -2,6 +2,7 @@ import {
   callProvider,
   getBearerToken,
   json,
+  missingProvider,
   modelCatalog,
   readJson,
   resolveModel,
@@ -34,6 +35,19 @@ export async function onRequestPost({ request, env }) {
     return json({ ok: false, error: "视频模型不支持。" }, 400);
   }
 
+  const missing = [
+    ...missingProvider(env, textModel),
+    ...missingProvider(env, imageModel),
+    ...missingProvider(env, videoModel)
+  ];
+  if (missing.length) {
+    return json({
+      ok: false,
+      error: "模型 API 尚未配置完整，未扣点。",
+      missing: [...new Set(missing)]
+    }, 503);
+  }
+
   const cost = segmentCount * videoConfig.cost;
   if (wallet.balance < cost) {
     return json({ ok: false, error: "余额不足，请先充值。", balance: wallet.balance, cost }, 402);
@@ -49,17 +63,27 @@ export async function onRequestPost({ request, env }) {
     duration: videoConfig.duration,
     segmentCount,
     cost,
+    importMode: body.importMode || "manual",
     productName: body.productName || "",
     productUrl: body.productUrl || "",
+    productBrief: body.productBrief || "",
+    brandBrief: body.brandBrief || "",
+    placementRules: body.placementRules || "",
+    seriesPremise: body.seriesPremise || "",
     targetPlatform: body.targetPlatform || "",
     script: body.script || "",
     storyboard: body.storyboard || null
   };
 
   const llmResult = await callProvider(env, textModel, {
-    task: "short_drama_storyboard_package",
+    task: "commerce_drama_series_bible_and_storyboard",
     job,
+    instruction: "先生成连续爽剧的剧集圣经、人物关系、爽点结构和自然植入规则，再生成当前批次的故事板。商品不能硬广化。",
     script: body.script || "",
+    productBrief: body.productBrief || "",
+    brandBrief: body.brandBrief || "",
+    placementRules: body.placementRules || "",
+    seriesPremise: body.seriesPremise || "",
     output_format: "json"
   });
 
@@ -67,7 +91,8 @@ export async function onRequestPost({ request, env }) {
     task: "storyboard_reference_image",
     job,
     storyboard: body.storyboard || null,
-    styleRoute: body.styleRoute
+    styleRoute: body.styleRoute,
+    instruction: "生成连续爽剧风格故事板参考图，商品以道具和生活场景自然出现，不做硬广海报。"
   });
 
   const videoResult = await callProvider(env, videoModel, {
@@ -76,6 +101,7 @@ export async function onRequestPost({ request, env }) {
     prompt: body.prompt || "",
     script: body.script || "",
     storyboard: body.storyboard || null,
+    placementRules: body.placementRules || "",
     referenceImage: imageResult?.data?.url || imageResult?.data?.image_url || null
   });
 

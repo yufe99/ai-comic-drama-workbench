@@ -1,12 +1,12 @@
 const viewCopy = {
-  dashboard: ["项目", "把商品链接、卖点和人群，自动变成剧情广告脚本、故事板和可投放视频素材。"],
-  product: ["商品", "先理解商品、用户痛点和购买阻力，再进入剧情广告生成。"],
-  styles: ["剧情路线", "广告剧情是主线，悬疑、漫画、古风、仙侠都是卖货表达风格。"],
+  dashboard: ["项目", "把商品资料、品牌禁忌和目标人群，变成连续爽剧、角色资产、故事板和自然植入的视频素材。"],
+  product: ["资料", "支持商品链接、手工输入、品牌资料、植入规则和连续爽剧设定。"],
+  styles: ["剧情路线", "广告剧情是底层能力，悬疑、漫画、古风、仙侠都是品牌爽剧的表现风格。"],
   models: ["模型", "视频模型选一次，整批素材统一按该模型时长生成。"],
-  script: ["脚本", "围绕商品痛点拆分 8-15 秒素材，镜头少、冲突强、产品露出明确。"],
-  assets: ["资产", "商品、角色、场景、道具和品牌口径统一复用。"],
-  storyboard: ["故事板", "每一格都绑定产品露出、台词和转化意图。"],
-  generation: ["生成", "批量生成多钩子、多场景、多平台的剧情广告素材。"],
+  script: ["脚本", "先写连续爽剧，再把商品作为道具、习惯或关系线索自然植入。"],
+  assets: ["资产", "商品、角色、场景、道具、品牌口径和禁忌统一复用。"],
+  storyboard: ["故事板", "每一格都绑定戏剧功能、台词、道具位置和隐性植入方式。"],
+  generation: ["生成", "批量生成同一世界观下的多集、多段、同风格品牌爽剧素材。"],
   settings: ["设置", "项目存储按保留周期自动清理，模型 Key 只放后端环境变量。"]
 };
 
@@ -102,6 +102,11 @@ const state = {
   productName: "晚安修护精华",
   productUrl: "https://example.com/product/night-repair-serum",
   targetPlatform: "抖音 / 小红书",
+  importMode: "manual",
+  productBrief: "一款夜间修护精华，主打熬夜暗沉、屏障脆弱、第二天上妆卡粉。质地清爽，适合睡前使用，核心卖点是夜间修护和次日透亮。",
+  brandBrief: "品牌调性高级、克制、可信，不做夸张承诺。可以说“改善熬夜后的暗沉观感”，不要说“立刻美白”。",
+  placementRules: "商品不能像硬广一样突然出现，要作为女主解决困境的生活道具出现。每 12-15 秒片段最多 1 次主露出，台词不直接喊购买。",
+  seriesPremise: "女主被前任和职场竞争者看轻，靠一次次反转证明自己。精华不是广告主角，而是她每次重要场合前的固定仪式和状态锚点。",
   seedancePipelineStatus: "待探测"
 };
 
@@ -117,6 +122,11 @@ const gateBanner = document.querySelector("#gateBanner");
 const productNameInput = document.querySelector("#productNameInput");
 const productUrlInput = document.querySelector("#productUrlInput");
 const platformSelect = document.querySelector("#platformSelect");
+const importModeSelect = document.querySelector("#importModeSelect");
+const productBriefInput = document.querySelector("#productBriefInput");
+const brandBriefInput = document.querySelector("#brandBriefInput");
+const placementRulesInput = document.querySelector("#placementRulesInput");
+const seriesPremiseInput = document.querySelector("#seriesPremiseInput");
 const scriptInput = document.querySelector("#scriptInput");
 
 function setBind(name, value) {
@@ -293,6 +303,26 @@ productUrlInput.addEventListener("input", (event) => {
 platformSelect.addEventListener("change", (event) => {
   state.targetPlatform = event.target.value;
   renderAll();
+});
+
+importModeSelect.addEventListener("change", (event) => {
+  state.importMode = event.target.value;
+});
+
+productBriefInput.addEventListener("input", (event) => {
+  state.productBrief = event.target.value;
+});
+
+brandBriefInput.addEventListener("input", (event) => {
+  state.brandBrief = event.target.value;
+});
+
+placementRulesInput.addEventListener("input", (event) => {
+  state.placementRules = event.target.value;
+});
+
+seriesPremiseInput.addEventListener("input", (event) => {
+  state.seriesPremise = event.target.value;
 });
 
 document.querySelectorAll("[data-open-submit]").forEach((button) => button.addEventListener("click", openSubmitModal));
@@ -473,6 +503,11 @@ showView(state.currentView);
           body: JSON.stringify({
             productName: state.productName,
             productUrl: state.productUrl,
+            importMode: state.importMode,
+            productBrief: state.productBrief,
+            brandBrief: state.brandBrief,
+            placementRules: state.placementRules,
+            seriesPremise: state.seriesPremise,
             targetPlatform: state.targetPlatform,
             styleRoute: state.styleRoute,
             textModel: state.textModel,
@@ -483,9 +518,11 @@ showView(state.currentView);
             storyboard: {
               duration: currentConfig().duration,
               template: currentConfig().template,
-              commerceGoal: styleRoutes[state.styleRoute].conversionGoal
+              dramaPriority: "先好看，再植入；禁止硬广口播",
+              commerceGoal: styleRoutes[state.styleRoute].conversionGoal,
+              placementRules: state.placementRules
             },
-            prompt: `${state.productName}，${styleRoutes[state.styleRoute].name}，${state.targetPlatform} 电商剧情广告。`
+            prompt: `${state.productName}，${styleRoutes[state.styleRoute].name}，${state.targetPlatform} 连续爽剧，自然植入商品，不要硬广感。`
           })
         });
         syncWallet(response.balanceAfter, response.walletToken);

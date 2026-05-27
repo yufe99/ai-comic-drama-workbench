@@ -45,7 +45,7 @@
           <div>
             <p class="eyebrow">Commerce Drama Ads</p>
             <h1 id="viewTitle">项目</h1>
-            <p id="viewSubtitle">把商品链接、卖点和人群，自动变成剧情广告脚本、故事板和可投放视频素材。</p>
+            <p id="viewSubtitle">把商品资料、品牌禁忌和目标人群，变成连续爽剧、角色资产、故事板和自然植入的视频素材。</p>
           </div>
           <div class="top-actions">
             <button class="secondary locked-action" data-locked-action>导入商品</button>
@@ -68,8 +68,8 @@
               <div class="hero-head">
                 <div>
                   <p class="section-kicker">项目概况</p>
-                  <h2>晚安修护精华 · 剧情带货素材包</h2>
-                  <p>系统先理解商品、用户痛点和购买阻力，再生成适合抖音、小红书、TikTok 和店铺详情页的剧情广告素材。</p>
+                  <h2>晚安修护精华 · 品牌连续爽剧</h2>
+                  <p>先把商品变成故事里的关键道具，再设计人物欲望、误会、反转和爽点，让观众先追剧情，广告在剧情里自然发生。</p>
                 </div>
                 <span class="status-badge" data-bind="accountState">未充值</span>
               </div>
@@ -87,14 +87,14 @@
               <div class="panel-head">
                 <div>
                   <h2>生产链路</h2>
-                  <p>不是泛短剧，而是围绕转化做商品剧情素材。</p>
+                  <p>不是硬广素材，而是能连续看的品牌爽剧。</p>
                 </div>
               </div>
               <div class="stack-list">
-                <div class="price-line"><span>1. 商品脑</span><strong>卖点 / 痛点 / 阻力</strong></div>
-                <div class="price-line"><span>2. 剧情钩子</span><strong>冲突 / 反转 / 口播植入</strong></div>
-                <div class="price-line"><span>3. 故事板</span><strong>镜头 / 台词 / 产品露出</strong></div>
-                <div class="price-line"><span>4. 批量视频</span><strong>多开头 / 多平台 / 多版本</strong></div>
+                <div class="price-line"><span>1. 资料导入</span><strong>链接 / 手填 / 品牌资料 / 禁忌</strong></div>
+                <div class="price-line"><span>2. 剧集圣经</span><strong>人设 / 关系 / 爽点 / 悬念</strong></div>
+                <div class="price-line"><span>3. 故事板</span><strong>镜头 / 台词 / 道具植入</strong></div>
+                <div class="price-line"><span>4. 连续生成</span><strong>多集 / 多段 / 同风格</strong></div>
               </div>
             </article>
           </section>
@@ -113,14 +113,22 @@
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>商品输入</h2>
-                  <p>输入商品链接、卖点和目标人群，后端会生成剧情广告 brief。</p>
+                  <h2>资料导入</h2>
+                  <p>可填商品链接，也可手工输入商品、简介、品牌资料和禁忌。系统先展开连续爽剧，再把商品自然放进故事。</p>
                 </div>
-                <button class="secondary locked-action" data-locked-action>解析商品</button>
+                <button class="secondary locked-action" data-locked-action>生成剧集 brief</button>
               </div>
               <div class="form-grid">
+                <label class="field">
+                  <span>导入方式</span>
+                  <select id="importModeSelect">
+                    <option value="manual">手工输入资料</option>
+                    <option value="url">商品链接解析</option>
+                    <option value="mixed">链接 + 手工补充</option>
+                  </select>
+                </label>
                 <label class="field field-wide">
-                  <span>商品链接</span>
+                  <span>商品链接（可选）</span>
                   <input id="productUrlInput" value="https://example.com/product/night-repair-serum" />
                 </label>
                 <label class="field">
@@ -137,12 +145,20 @@
                   </select>
                 </label>
                 <label class="field field-wide">
-                  <span>卖点</span>
-                  <input id="sellingPointsInput" value="熬夜暗沉、屏障脆弱、第二天上妆卡粉，主打夜间修护和次日透亮。" />
+                  <span>商品简介 / 必要资料</span>
+                  <textarea id="productBriefInput">一款夜间修护精华，主打熬夜暗沉、屏障脆弱、第二天上妆卡粉。质地清爽，适合睡前使用，核心卖点是夜间修护和次日透亮。</textarea>
                 </label>
                 <label class="field field-wide">
-                  <span>购买阻力</span>
-                  <input id="objectionInput" value="用户担心油腻、见效慢、成分刺激、价格偏高。" />
+                  <span>品牌资料 / 口径</span>
+                  <textarea id="brandBriefInput">品牌调性高级、克制、可信，不做夸张承诺。可以说“改善熬夜后的暗沉观感”，不要说“立刻美白”。</textarea>
+                </label>
+                <label class="field field-wide">
+                  <span>植入规则</span>
+                  <textarea id="placementRulesInput">商品不能像硬广一样突然出现，要作为女主解决困境的生活道具出现。每 12-15 秒片段最多 1 次主露出，台词不直接喊购买。</textarea>
+                </label>
+                <label class="field field-wide">
+                  <span>连续爽剧设定</span>
+                  <textarea id="seriesPremiseInput">女主被前任和职场竞争者看轻，靠一次次反转证明自己。精华不是广告主角，而是她每次重要场合前的固定仪式和状态锚点。</textarea>
                 </label>
               </div>
             </article>
@@ -150,15 +166,15 @@
             <aside class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>商品脑摘要</h2>
-                  <p>生成脚本时会优先使用这些转化信息。</p>
+                  <h2>剧集 brief 摘要</h2>
+                  <p>生成脚本时优先保证好看，再控制植入不出戏。</p>
                 </div>
               </div>
               <div class="config-stack">
-                <div><span>核心人群</span><strong>25-35 岁熬夜通勤女性</strong></div>
-                <div><span>使用场景</span><strong>睡前护肤 / 约会前一晚</strong></div>
-                <div><span>剧情冲突</span><strong>临时约会但皮肤状态翻车</strong></div>
-                <div><span>产品露出</span><strong>使用动作 + 质地特写 + 次日状态</strong></div>
+                <div><span>第一优先级</span><strong>剧情好看，爽点成立</strong></div>
+                <div><span>植入方式</span><strong>道具化、习惯化、关系化</strong></div>
+                <div><span>连续钩子</span><strong>每段结尾留误会或反转</strong></div>
+                <div><span>禁止</span><strong>硬喊购买、夸张功效、无关口播</strong></div>
               </div>
             </aside>
           </section>

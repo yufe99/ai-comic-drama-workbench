@@ -496,6 +496,19 @@ input {
   outline: none;
 }
 
+.field textarea {
+  width: 100%;
+  min-height: 104px;
+  resize: vertical;
+  padding: 12px 14px;
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  background: #0f0f0d;
+  color: var(--text);
+  line-height: 1.7;
+  outline: none;
+}
+
 .duration-config {
   margin-top: 14px;
 }
