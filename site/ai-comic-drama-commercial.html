@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI短剧工作台</title>
+    <title>AI电商剧情广告工作台</title>
     <link rel="stylesheet" href="./ai-comic-drama-commercial.css" />
   </head>
   <body>
@@ -12,17 +12,18 @@
         <div class="brand">
           <span class="brand-mark">剧</span>
           <div>
-            <strong>AI短剧工作台</strong>
+            <strong>剧情卖货引擎</strong>
             <small>充值后解锁生成</small>
           </div>
         </div>
 
         <div class="nav-group">
-          <p class="group-label">创作生产</p>
+          <p class="group-label">广告生产</p>
           <button class="nav-item active" data-view="dashboard">项目</button>
-          <button class="nav-item" data-view="styles">风格</button>
+          <button class="nav-item" data-view="product">商品</button>
+          <button class="nav-item" data-view="styles">剧情路线</button>
           <button class="nav-item" data-view="models">模型</button>
-          <button class="nav-item" data-view="script">剧本</button>
+          <button class="nav-item" data-view="script">脚本</button>
           <button class="nav-item" data-view="assets">资产</button>
           <button class="nav-item" data-view="storyboard">故事板</button>
           <button class="nav-item" data-view="generation">生成</button>
@@ -33,7 +34,7 @@
           <div class="wallet-card">
             <span data-bind="accountState">未充值</span>
             <strong data-bind="walletBalance">0 创作点</strong>
-            <small data-bind="accountHint">只能查看示例</small>
+            <small data-bind="accountHint">只能查看展示</small>
           </div>
           <button class="primary full" id="rechargeButton">充值解锁</button>
         </div>
@@ -42,12 +43,12 @@
       <main class="workspace">
         <header class="topbar">
           <div>
-            <p class="eyebrow">Commercial Preview</p>
+            <p class="eyebrow">Commerce Drama Ads</p>
             <h1 id="viewTitle">项目</h1>
-            <p id="viewSubtitle">未充值可查看示例，充值后才能导入剧本和提交生成。</p>
+            <p id="viewSubtitle">把商品链接、卖点和人群，自动变成剧情广告脚本、故事板和可投放视频素材。</p>
           </div>
           <div class="top-actions">
-            <button class="secondary locked-action" data-locked-action>导入剧本</button>
+            <button class="secondary locked-action" data-locked-action>导入商品</button>
             <button class="secondary">查看示例</button>
             <button class="primary locked-action" data-open-submit>提交生成</button>
           </div>
@@ -56,7 +57,7 @@
         <section class="gate-banner" id="gateBanner">
           <div>
             <strong>当前为展示模式</strong>
-            <span>充值后解锁项目创建、剧本导入、故事板生成、视频生成和导出。</span>
+            <span>充值后解锁商品解析、剧情脚本、故事板、批量视频生成和素材导出。</span>
           </div>
           <button class="primary" data-open-recharge>立即充值</button>
         </section>
@@ -67,15 +68,15 @@
               <div class="hero-head">
                 <div>
                   <p class="section-kicker">项目概况</p>
-                  <h2>心动频率 · 都市短剧</h2>
-                  <p>当前项目统一使用一个视频模型和一个片段时长，整集分镜、故事板和提交任务都跟着它走。</p>
+                  <h2>晚安修护精华 · 剧情带货素材包</h2>
+                  <p>系统先理解商品、用户痛点和购买阻力，再生成适合抖音、小红书、TikTok 和店铺详情页的剧情广告素材。</p>
                 </div>
                 <span class="status-badge" data-bind="accountState">未充值</span>
               </div>
               <div class="overview-grid">
-                <div><span>总集数</span><strong>20 集</strong></div>
-                <div><span>已拆片段</span><strong>286 段</strong></div>
-                <div><span>待返修</span><strong>17 段</strong></div>
+                <div><span>商品</span><strong data-bind="productName">晚安修护精华</strong></div>
+                <div><span>目标平台</span><strong data-bind="targetPlatform">抖音 / 小红书</strong></div>
+                <div><span>剧情路线</span><strong data-bind="styleRouteName">广告剧情</strong></div>
                 <div><span>当前模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
                 <div><span>统一时长</span><strong data-bind="currentDurationText">12秒</strong></div>
                 <div><span>提交后余额</span><strong data-bind="remainingBalance">0 创作点</strong></div>
@@ -85,25 +86,81 @@
             <article class="hero-panel">
               <div class="panel-head">
                 <div>
-                  <h2>当前配置</h2>
-                  <p>视频模型一旦选定，分段和故事板就统一按这个时长执行。</p>
+                  <h2>生产链路</h2>
+                  <p>不是泛短剧，而是围绕转化做商品剧情素材。</p>
                 </div>
               </div>
               <div class="stack-list">
-                <div class="price-line"><span>语言模型</span><strong data-bind="selectedTextModel">GPT-4.1</strong></div>
-                <div class="price-line"><span>图片模型</span><strong data-bind="selectedImageModel">Nana Banana 2</strong></div>
-                <div class="price-line"><span>视频模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
-                <div class="price-line"><span>片段模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
+                <div class="price-line"><span>1. 商品脑</span><strong>卖点 / 痛点 / 阻力</strong></div>
+                <div class="price-line"><span>2. 剧情钩子</span><strong>冲突 / 反转 / 口播植入</strong></div>
+                <div class="price-line"><span>3. 故事板</span><strong>镜头 / 台词 / 产品露出</strong></div>
+                <div class="price-line"><span>4. 批量视频</span><strong>多开头 / 多平台 / 多版本</strong></div>
               </div>
             </article>
           </section>
 
           <section class="metric-row">
-            <article><span>预计片段</span><strong data-bind="selectedSegmentCount">24 段</strong></article>
-            <article><span>视频套餐</span><strong data-bind="currentDurationText">12秒</strong></article>
+            <article><span>预计素材</span><strong data-bind="selectedSegmentCount">24 条</strong></article>
+            <article><span>单条时长</span><strong data-bind="currentDurationText">12秒</strong></article>
             <article><span>预计消耗</span><strong data-bind="estimatedCost">3,600 点</strong></article>
             <article><span>余额</span><strong data-bind="walletBalance">0 创作点</strong></article>
-            <article><span>状态</span><strong data-bind="accountHint">只能查看示例</strong></article>
+            <article><span>状态</span><strong data-bind="accountHint">只能查看展示</strong></article>
+          </section>
+        </section>
+
+        <section class="view" data-view-panel="product">
+          <section class="content-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>商品输入</h2>
+                  <p>输入商品链接、卖点和目标人群，后端会生成剧情广告 brief。</p>
+                </div>
+                <button class="secondary locked-action" data-locked-action>解析商品</button>
+              </div>
+              <div class="form-grid">
+                <label class="field field-wide">
+                  <span>商品链接</span>
+                  <input id="productUrlInput" value="https://example.com/product/night-repair-serum" />
+                </label>
+                <label class="field">
+                  <span>商品名称</span>
+                  <input id="productNameInput" value="晚安修护精华" />
+                </label>
+                <label class="field">
+                  <span>目标平台</span>
+                  <select id="platformSelect">
+                    <option value="抖音 / 小红书">抖音 / 小红书</option>
+                    <option value="TikTok">TikTok</option>
+                    <option value="店铺详情页">店铺详情页</option>
+                    <option value="私域朋友圈">私域朋友圈</option>
+                  </select>
+                </label>
+                <label class="field field-wide">
+                  <span>卖点</span>
+                  <input id="sellingPointsInput" value="熬夜暗沉、屏障脆弱、第二天上妆卡粉，主打夜间修护和次日透亮。" />
+                </label>
+                <label class="field field-wide">
+                  <span>购买阻力</span>
+                  <input id="objectionInput" value="用户担心油腻、见效慢、成分刺激、价格偏高。" />
+                </label>
+              </div>
+            </article>
+
+            <aside class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>商品脑摘要</h2>
+                  <p>生成脚本时会优先使用这些转化信息。</p>
+                </div>
+              </div>
+              <div class="config-stack">
+                <div><span>核心人群</span><strong>25-35 岁熬夜通勤女性</strong></div>
+                <div><span>使用场景</span><strong>睡前护肤 / 约会前一晚</strong></div>
+                <div><span>剧情冲突</span><strong>临时约会但皮肤状态翻车</strong></div>
+                <div><span>产品露出</span><strong>使用动作 + 质地特写 + 次日状态</strong></div>
+              </div>
+            </aside>
           </section>
         </section>
 
@@ -112,40 +169,40 @@
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>风格路线</h2>
-                  <p>先定风格，再锁人脸、场景和镜头基调。</p>
+                  <h2>剧情路线</h2>
+                  <p>路线服务于卖货目标，悬疑、漫剧、古风都只是广告剧情的表现形式。</p>
                 </div>
               </div>
               <div class="style-route-grid" id="styleRouteGrid">
-                <button class="style-route selected" data-style-route="live_action_drama" type="button">
-                  <strong>真人短剧</strong>
-                  <span>都市 / 悬疑 / 职场</span>
-                  <small>真人人脸一致性最严。</small>
-                </button>
-                <button class="style-route" data-style-route="live_action_stylized" type="button">
-                  <strong>真人感漫剧</strong>
-                  <span>真人比例 + 漫画渲染</span>
-                  <small>适合商用批量生产。</small>
-                </button>
-                <button class="style-route" data-style-route="comic_2_5d" type="button">
-                  <strong>2.5D 漫剧</strong>
-                  <span>小说改编 / 竖屏连载</span>
-                  <small>人物和画风稳定优先。</small>
-                </button>
-                <button class="style-route" data-style-route="chinese_animation_cinematic" type="button">
-                  <strong>国漫电影感</strong>
-                  <span>古风 / 玄幻 / 仙侠</span>
-                  <small>镜头运动和特效更强。</small>
-                </button>
-                <button class="style-route" data-style-route="anime_manhwa" type="button">
-                  <strong>日漫 / 韩漫风</strong>
-                  <span>甜宠 / 校园 / 恋爱</span>
-                  <small>表情和节奏优先。</small>
-                </button>
-                <button class="style-route" data-style-route="ad_drama" type="button">
+                <button class="style-route selected" data-style-route="ad_drama" type="button">
                   <strong>广告剧情</strong>
-                  <span>产品植入 / 口播剧情</span>
-                  <small>文案和品牌准确优先。</small>
+                  <span>冲突开场 / 产品解决</span>
+                  <small>适合大多数商品首轮测试。</small>
+                </button>
+                <button class="style-route" data-style-route="oral_pitch_drama" type="button">
+                  <strong>口播剧情</strong>
+                  <span>人物对话 + 卖点讲透</span>
+                  <small>适合高客单、需要解释的商品。</small>
+                </button>
+                <button class="style-route" data-style-route="suspense_commerce" type="button">
+                  <strong>悬疑卖货</strong>
+                  <span>异常问题 / 反转答案</span>
+                  <small>适合保健、护肤、家清、母婴。</small>
+                </button>
+                <button class="style-route" data-style-route="comic_commerce" type="button">
+                  <strong>漫画卖货</strong>
+                  <span>夸张表情 / 高密度信息</span>
+                  <small>适合低成本批量投放。</small>
+                </button>
+                <button class="style-route" data-style-route="guofeng_commerce" type="button">
+                  <strong>古风卖货</strong>
+                  <span>国风人设 / 场景化植入</span>
+                  <small>适合茶饮、香氛、文创、美妆。</small>
+                </button>
+                <button class="style-route" data-style-route="xianxia_commerce" type="button">
+                  <strong>仙侠卖货</strong>
+                  <span>设定感强 / 爽点反转</span>
+                  <small>适合兴趣电商和视觉型商品。</small>
                 </button>
               </div>
             </article>
@@ -154,14 +211,14 @@
               <div class="panel-head">
                 <div>
                   <h2>路线摘要</h2>
-                  <p>当前风格会影响角色、人脸和故事板模板。</p>
+                  <p>当前路线会影响脚本钩子、产品露出和镜头节奏。</p>
                 </div>
               </div>
               <div class="config-stack">
-                <div><span>风格路线</span><strong data-bind="styleRouteName">真人感漫剧</strong></div>
-                <div><span>人脸来源</span><strong data-bind="recommendedFaceSource">外部真人人脸</strong></div>
-                <div><span>一致性</span><strong data-bind="consistencyLevel">严格</strong></div>
-                <div><span>台词模式</span><strong data-bind="dialogueMode">口型同步</strong></div>
+                <div><span>剧情路线</span><strong data-bind="styleRouteName">广告剧情</strong></div>
+                <div><span>核心目标</span><strong data-bind="conversionGoal">突出卖点并降低购买阻力</strong></div>
+                <div><span>产品露出</span><strong data-bind="productExposure">3 次自然露出</strong></div>
+                <div><span>台词模式</span><strong data-bind="dialogueMode">剧情台词 + 轻口播</strong></div>
               </div>
             </aside>
           </section>
@@ -173,7 +230,7 @@
               <div class="panel-head">
                 <div>
                   <h2>模型</h2>
-                  <p>视频模型选一次，整部短剧就统一按这个时长跑。</p>
+                  <p>视频模型选定后，所有素材统一按该模型时长生成。</p>
                 </div>
               </div>
 
@@ -199,13 +256,13 @@
               <div class="model-matrix compact">
                 <button class="model-card selectable selected" data-model-select="Sora2" type="button">
                   <strong>Sora2</strong>
-                  <span>12 秒统一分段</span>
-                  <small>150 点 / 段。</small>
+                  <span>12 秒统一素材</span>
+                  <small>150 点 / 条，适合高质量测试。</small>
                 </button>
                 <button class="model-card selectable" data-model-select="Seedance2" type="button">
                   <strong>Seedance 2.0</strong>
-                  <span>15 秒统一分段</span>
-                  <small>1800 点 / 段。</small>
+                  <span>15 秒统一素材</span>
+                  <small>1800 点 / 条，适合视觉冲击素材。</small>
                 </button>
               </div>
             </article>
@@ -214,7 +271,7 @@
               <div class="panel-head">
                 <div>
                   <h2>当前选择</h2>
-                  <p>所有片段都复用这个模型和时长。</p>
+                  <p>语言模型和图片模型打包进生成流程，前端只显示主选择。</p>
                 </div>
               </div>
               <div class="config-stack">
@@ -222,7 +279,7 @@
                 <div><span>图片模型</span><strong data-bind="selectedImageModel">GPT Image2</strong></div>
                 <div><span>视频模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
                 <div><span>统一时长</span><strong data-bind="currentDurationText">12秒</strong></div>
-                <div><span>故事板模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
+                <div><span>素材数量</span><strong data-bind="selectedSegmentCount">24 条</strong></div>
               </div>
             </aside>
           </section>
@@ -233,38 +290,33 @@
             <article class="panel script-editor">
               <div class="panel-head">
                 <div>
-                  <h2>剧本分段</h2>
-                  <p>按当前视频模型的统一时长切分，所有镜头都沿用同一套模型。</p>
+                  <h2>剧情广告脚本</h2>
+                  <p>围绕商品痛点拆分 8-15 秒素材，镜头少、冲突强、产品露出明确。</p>
                 </div>
-                <button class="secondary locked-action" id="refreshSegments" data-locked-action>重新分段</button>
+                <button class="secondary locked-action" id="refreshSegments" data-locked-action>重新生成脚本</button>
               </div>
-              <textarea id="scriptInput" readonly>女主带着偷拍视频冲进发布会后台，想在总裁宣布订婚前揭穿真相。男主先一步拦住她，低声说证据还缺最后一环。女二从红毯回眸，看见他们并误会两人联手。保镖逼近，男主拉女主转身进入消防通道。女主压低声音：你到底帮我，还是在拖我？</textarea>
+              <textarea id="scriptInput">女主第二天要见前任，镜子里却看到熬夜暗沉和卡粉。闺蜜把晚安修护精华推到她面前：别遮了，今晚先把状态救回来。镜头切到质地推开、睡前使用、第二天自然光下皮肤变亮。女主收到前任消息，低声说：这次不用躲镜头了。</textarea>
             </article>
 
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>分段结果</h2>
-                  <p>当前项目所有段都跟随同一个视频模型。</p>
+                  <h2>素材拆分</h2>
+                  <p>当前项目所有素材都跟随同一个视频模型。</p>
                 </div>
-              </div>
-              <div class="config-stack">
-                <div><span>当前模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
-                <div><span>统一时长</span><strong data-bind="currentDurationText">12秒</strong></div>
-                <div><span>故事板模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
               </div>
               <div class="segment-list">
                 <div class="segment active">
-                  <strong data-bind="segmentA">EP01-S01 · Sora2 · 12s · 4 CUT</strong>
-                  <span data-bind="segmentADesc">女主冲后台，男主拦截，女二误会，最后转入消防通道收钩子。</span>
+                  <strong data-bind="segmentA">素材 01 · 冲突开场 · 12s</strong>
+                  <span data-bind="segmentADesc">熬夜暗沉导致约会前状态翻车，产品作为解决方案出现。</span>
                 </div>
                 <div class="segment">
-                  <strong data-bind="segmentB">EP01-S02 · Sora2 · 12s · 4 CUT</strong>
-                  <span data-bind="segmentBDesc">男主解释证据缺口，女主不信，保镖追近，关系继续拉扯。</span>
+                  <strong data-bind="segmentB">素材 02 · 质地证明 · 12s</strong>
+                  <span data-bind="segmentBDesc">通过近景质地、吸收速度和次日妆效降低购买阻力。</span>
                 </div>
                 <div class="segment">
-                  <strong data-bind="segmentC">EP01-S03 · Sora2 · 12s · 4 CUT</strong>
-                  <span data-bind="segmentCDesc">女二误会升级，媒体冲来，男主决定当场反转。</span>
+                  <strong data-bind="segmentC">素材 03 · 反转收口 · 12s</strong>
+                  <span data-bind="segmentCDesc">从躲镜头到主动赴约，用情绪转变完成转化。</span>
                 </div>
               </div>
             </article>
@@ -276,29 +328,29 @@
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>全剧资产</h2>
-                  <p>多人角色、场景、道具和色卡统一继承。</p>
+                  <h2>广告资产</h2>
+                  <p>商品、角色、场景、道具和品牌口径统一复用。</p>
                 </div>
               </div>
               <div class="bible-grid">
-                <div><strong>Cast</strong><p>女主、男主、女二、保镖、媒体群演。</p></div>
-                <div><strong>Location</strong><p>发布会、红毯、后台、消防通道、电梯厅。</p></div>
-                <div><strong>Prop</strong><p>偷拍视频手机、邀请函、耳机、门禁卡。</p></div>
-                <div><strong>Style</strong><p>黑金都市夜景、冷白高反差边光。</p></div>
+                <div><strong>Product</strong><p>瓶身、质地、包装、使用动作、品牌色。</p></div>
+                <div><strong>Cast</strong><p>女主、闺蜜、前任、店播口播角色。</p></div>
+                <div><strong>Scene</strong><p>卧室梳妆台、浴室镜前、自然光窗边、约会门口。</p></div>
+                <div><strong>Claims</strong><p>夜间修护、次日透亮、不油腻、敏感肌先局部测试。</p></div>
               </div>
             </article>
 
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>多人角色</h2>
-                  <p>防串脸、防错台词。</p>
+                  <h2>角色资产</h2>
+                  <p>多版本素材复用同一套人物设定。</p>
                 </div>
               </div>
               <div class="character-list">
-                <div><span class="avatar female"></span><strong>女主 · 苏晚</strong><small>长黑发、风衣、急促语速。</small></div>
-                <div><span class="avatar male"></span><strong>男主 · 顾承</strong><small>深灰西装、低沉声线。</small></div>
-                <div><span class="avatar villain"></span><strong>女二 · 林薇</strong><small>红裙、高跟鞋、锋利眼妆。</small></div>
+                <div><span class="avatar female"></span><strong>女主 · 林夏</strong><small>熬夜通勤，皮肤状态焦虑，语速快。</small></div>
+                <div><span class="avatar male"></span><strong>前任 · 顾沉</strong><small>少量出镜，制造情绪压力。</small></div>
+                <div><span class="avatar villain"></span><strong>闺蜜 · 阿乔</strong><small>半口播角色，负责说清卖点。</small></div>
               </div>
             </article>
           </section>
@@ -310,37 +362,37 @@
               <div class="panel-head">
                 <div>
                   <h2>故事板</h2>
-                  <p>CUT、台词归属、音效和道具引用直接放进板里。</p>
+                  <p>每一格都绑定产品露出、台词和转化意图。</p>
                 </div>
                 <button class="primary locked-action" data-locked-action>导出 PNG</button>
               </div>
 
               <div class="storyboard-meta">
-                <div><span>当前模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
-                <div><span>统一时长</span><strong data-bind="currentDurationText">12秒</strong></div>
-                <div><span>模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
+                <div><span>模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
+                <div><span>时长</span><strong data-bind="currentDurationText">12秒</strong></div>
+                <div><span>路线</span><strong data-bind="styleRouteName">广告剧情</strong></div>
               </div>
 
               <div class="storyboard-canvas">
                 <div class="cut-tile">
                   <header data-bind="cut1Title">CUT 1 · 00:00-00:03</header>
-                  <p data-bind="cut1Body">女主推门闯入后台，手机里的偷拍视频掠过画面。</p>
-                  <small data-bind="cut1Note">台词：无。音效：门响。</small>
+                  <p data-bind="cut1Body">女主看镜子，发现熬夜暗沉和卡粉。</p>
+                  <small data-bind="cut1Note">钩子：明天见前任，状态却翻车。</small>
                 </div>
                 <div class="cut-tile">
                   <header data-bind="cut2Title">CUT 2 · 00:03-00:06</header>
-                  <p data-bind="cut2Body">男主拦住她，低声说“还差最后一环”。</p>
-                  <small data-bind="cut2Note">台词归属：男主。</small>
+                  <p data-bind="cut2Body">闺蜜把精华推到镜头前，质地近景。</p>
+                  <small data-bind="cut2Note">产品露出：瓶身 + 质地。</small>
                 </div>
                 <div class="cut-tile">
                   <header data-bind="cut3Title">CUT 3 · 00:06-00:09</header>
-                  <p data-bind="cut3Body">女二回眸看到两人对峙，误会加深。</p>
-                  <small data-bind="cut3Note">人物：女二入镜。</small>
+                  <p data-bind="cut3Body">睡前使用，第二天自然光下皮肤状态变好。</p>
+                  <small data-bind="cut3Note">证明点：不油腻、次日透亮。</small>
                 </div>
                 <div class="cut-tile">
                   <header data-bind="cut4Title">CUT 4 · 00:09-00:12</header>
-                  <p data-bind="cut4Body">保镖逼近，男主拉女主进入消防通道，留下反问钩子。</p>
-                  <small data-bind="cut4Note">钩子 CUT。</small>
+                  <p data-bind="cut4Body">女主收到消息，主动对镜头微笑。</p>
+                  <small data-bind="cut4Note">收口：不用躲镜头。</small>
                 </div>
               </div>
             </article>
@@ -348,13 +400,14 @@
             <aside class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>模板</h2>
-                  <p>按时长自动切换。</p>
+                  <h2>投放变体</h2>
+                  <p>同一商品批量生成不同钩子。</p>
                 </div>
               </div>
               <div class="input-stack">
-                <div data-bind="templateLine1">Sora2 · 12s：4 CUT 时间线</div>
-                <div data-bind="templateLine2">Seedance 2.0 · 15s：4 CUT 丰富板</div>
+                <div>冲突钩子：明天见前任，今晚皮肤翻车。</div>
+                <div>测评钩子：半边脸试用，第二天对比。</div>
+                <div>口播钩子：别再只靠遮瑕救急。</div>
               </div>
             </aside>
           </section>
@@ -365,8 +418,8 @@
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>生成</h2>
-                  <p>当前项目所有片段都用同一个视频模型与统一时长。</p>
+                  <h2>批量生成</h2>
+                  <p>默认生成 24 条素材，覆盖 3 个钩子、2 个场景、4 个脚本角度。</p>
                 </div>
                 <button class="primary locked-action" data-open-submit>提交生成</button>
               </div>
@@ -374,16 +427,16 @@
               <div class="model-matrix">
                 <button class="model-card selectable selected" data-model-select="Sora2" type="button">
                   <strong>Sora2</strong>
-                  <span>12 秒统一分段</span>
+                  <span>12 秒统一素材</span>
                 </button>
                 <button class="model-card selectable" data-model-select="Seedance2" type="button">
                   <strong>Seedance 2.0</strong>
-                  <span>15 秒统一分段</span>
+                  <span>15 秒统一素材</span>
                 </button>
               </div>
 
               <div class="model-guard compact">
-                <strong>Seedance 2.0 人脸适配</strong>
+                <strong>真人脸与商品一致性</strong>
                 <div class="guard-actions">
                   <button class="secondary locked-action" id="consentAction" data-locked-action>授权</button>
                   <button class="secondary locked-action" id="probeAction" data-locked-action>探测</button>
@@ -401,8 +454,9 @@
                 </div>
               </div>
               <div class="billing-box">
+                <div class="bill-line"><span>商品</span><strong data-bind="productName">晚安修护精华</strong></div>
                 <div class="bill-line"><span>模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
-                <div class="bill-line"><span>时长</span><strong data-bind="currentDurationText">12秒</strong></div>
+                <div class="bill-line"><span>素材数</span><strong data-bind="selectedSegmentCount">24 条</strong></div>
                 <div class="bill-line"><span>预计消耗</span><strong data-bind="estimatedCost">3,600 点</strong></div>
                 <div class="bill-line"><span>提交后余额</span><strong data-bind="remainingBalance">0 创作点</strong></div>
               </div>
@@ -416,7 +470,7 @@
               <div class="panel-head">
                 <div>
                   <h2>项目设置</h2>
-                  <p>存储规则会自动应用到项目素材和生成结果。</p>
+                  <p>素材存储按保留周期自动清理，主资产和订单记录长期保留。</p>
                 </div>
                 <button class="secondary locked-action" data-locked-action>一键清理测试版本</button>
               </div>
@@ -430,11 +484,11 @@
               </div>
 
               <div class="storage-grid">
-                <div><span>主资产</span><strong>长期保留</strong><small>角色、场景、道具、主故事板</small></div>
+                <div><span>商品主资产</span><strong>长期保留</strong><small>商品图、品牌色、角色设定</small></div>
                 <div><span>故事板草稿</span><strong>7 天</strong><small>过期后自动清理</small></div>
                 <div><span>未选测试视频</span><strong>15 天</strong><small>优先释放空间</small></div>
-                <div><span>已通过质检片段</span><strong>30 天</strong><small>未进入粗剪前限时保留</small></div>
-                <div><span>审计记录</span><strong>长期保留</strong><small>充值、扣费、模型调用记录</small></div>
+                <div><span>投放主版本</span><strong>30 天</strong><small>导出后进入清理周期</small></div>
+                <div><span>订单与扣费</span><strong>长期保留</strong><small>充值、扣点、模型调用记录</small></div>
                 <div><span>失败任务文件</span><strong>每日清理</strong><small>后台自动处理</small></div>
               </div>
             </article>
@@ -442,15 +496,15 @@
             <aside class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>清理队列</h2>
-                  <p>不影响主版本和法务记录。</p>
+                  <h2>后台接入</h2>
+                  <p>模型 Key 只放在 Cloudflare 环境变量。</p>
                 </div>
               </div>
               <div class="config-stack">
-                <div><span>失败任务中间文件</span><strong>126 MB</strong></div>
-                <div><span>未选测试视频</span><strong>1.4 GB</strong></div>
-                <div><span>故事板草稿</span><strong>320 MB</strong></div>
-                <div><span>临时导出文件</span><strong>480 MB</strong></div>
+                <div><span>API 路由</span><strong>/api/generate</strong></div>
+                <div><span>钱包模式</span><strong>充值码 + 钱包 Token</strong></div>
+                <div><span>存储建议</span><strong>Cloudflare KV + R2</strong></div>
+                <div><span>下一步</span><strong>接入真实模型和支付审核</strong></div>
               </div>
             </aside>
           </section>
@@ -469,12 +523,12 @@
         </div>
 
         <div class="modal-summary">
-          <div><span>风格</span><strong data-bind="styleRouteName">真人感漫剧</strong></div>
+          <div><span>商品</span><strong data-bind="productName">晚安修护精华</strong></div>
+          <div><span>剧情路线</span><strong data-bind="styleRouteName">广告剧情</strong></div>
           <div><span>语言模型</span><strong data-bind="selectedTextModel">DeepSeek</strong></div>
           <div><span>图片模型</span><strong data-bind="selectedImageModel">GPT Image2</strong></div>
           <div><span>视频模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
-          <div><span>时长</span><strong data-bind="currentDurationText">12秒</strong></div>
-          <div><span>模板</span><strong data-bind="currentTemplateName">4 CUT 时间线</strong></div>
+          <div><span>素材数</span><strong data-bind="selectedSegmentCount">24 条</strong></div>
           <div><span>预计消耗</span><strong data-bind="estimatedCost">3,600 点</strong></div>
           <div><span>提交后余额</span><strong data-bind="remainingBalance">0 创作点</strong></div>
         </div>
@@ -499,19 +553,19 @@
         <div class="recharge-layout">
           <div class="qr-box">
             <div class="fake-qr">微信<br />收款码</div>
-            <small>正式版替换为真实收款二维码</small>
+            <small>正式版替换为真实收款二维码或订单审核。</small>
           </div>
           <div class="config-stack">
             <div><span>推荐充值</span><strong>100 元 = 10,000 点</strong></div>
-            <div><span>Sora2</span><strong>150 点 / 段</strong></div>
-            <div><span>Seedance 2.0</span><strong>1800 点 / 段</strong></div>
+            <div><span>Sora2</span><strong>150 点 / 条</strong></div>
+            <div><span>Seedance 2.0</span><strong>1800 点 / 条</strong></div>
             <div><span>到账方式</span><strong>后台审核后加点</strong></div>
           </div>
         </div>
 
         <div class="modal-actions">
           <button class="secondary" id="cancelRecharge" type="button">稍后再说</button>
-          <button class="primary" id="simulateRecharge" type="button">模拟已充值</button>
+          <button class="primary" id="simulateRecharge" type="button">使用充值码</button>
         </div>
       </div>
     </div>

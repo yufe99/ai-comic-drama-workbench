@@ -1,50 +1,51 @@
 const viewCopy = {
-  dashboard: ["项目", "未充值可查看示例，充值后才能导入剧本和提交生成。"],
-  styles: ["风格", "先定风格，再锁人脸、场景和镜头基调。"],
-  models: ["模型", "视频模型选一次，整部短剧就统一按这个时长跑。"],
-  script: ["剧本", "按当前视频模型的统一时长切分。"],
-  assets: ["资产", "多人角色、场景、道具和色卡统一继承。"],
-  storyboard: ["故事板", "CUT、台词归属、音效和道具引用直接放进板里。"],
-  generation: ["生成", "当前项目所有片段都用同一个视频模型与统一时长。"],
-  settings: ["设置", "项目存储按保留周期自动清理。"]
+  dashboard: ["项目", "把商品链接、卖点和人群，自动变成剧情广告脚本、故事板和可投放视频素材。"],
+  product: ["商品", "先理解商品、用户痛点和购买阻力，再进入剧情广告生成。"],
+  styles: ["剧情路线", "广告剧情是主线，悬疑、漫画、古风、仙侠都是卖货表达风格。"],
+  models: ["模型", "视频模型选一次，整批素材统一按该模型时长生成。"],
+  script: ["脚本", "围绕商品痛点拆分 8-15 秒素材，镜头少、冲突强、产品露出明确。"],
+  assets: ["资产", "商品、角色、场景、道具和品牌口径统一复用。"],
+  storyboard: ["故事板", "每一格都绑定产品露出、台词和转化意图。"],
+  generation: ["生成", "批量生成多钩子、多场景、多平台的剧情广告素材。"],
+  settings: ["设置", "项目存储按保留周期自动清理，模型 Key 只放后端环境变量。"]
 };
 
 const styleRoutes = {
-  live_action_drama: {
-    name: "真人短剧",
-    recommendedFaceSource: "外部真人人脸",
-    consistencyLevel: "严格",
-    dialogueMode: "口型同步"
-  },
-  live_action_stylized: {
-    name: "真人感漫剧",
-    recommendedFaceSource: "外部真人人脸 + Seedance专用脸",
-    consistencyLevel: "严格",
-    dialogueMode: "口型同步"
-  },
-  comic_2_5d: {
-    name: "2.5D 漫剧",
-    recommendedFaceSource: "插画角色 / 模型脸",
-    consistencyLevel: "平衡",
-    dialogueMode: "配音字幕"
-  },
-  chinese_animation_cinematic: {
-    name: "国漫电影感",
-    recommendedFaceSource: "插画角色 / 模型脸",
-    consistencyLevel: "严格",
-    dialogueMode: "配音字幕"
-  },
-  anime_manhwa: {
-    name: "日漫 / 韩漫风",
-    recommendedFaceSource: "插画角色",
-    consistencyLevel: "平衡",
-    dialogueMode: "配音字幕"
-  },
   ad_drama: {
     name: "广告剧情",
-    recommendedFaceSource: "平台人脸库 / 品牌授权脸",
-    consistencyLevel: "严格",
-    dialogueMode: "口型同步"
+    conversionGoal: "突出卖点并降低购买阻力",
+    productExposure: "3 次自然露出",
+    dialogueMode: "剧情台词 + 轻口播"
+  },
+  oral_pitch_drama: {
+    name: "口播剧情",
+    conversionGoal: "把成分、价格和效果讲清楚",
+    productExposure: "口播手持 + 质地特写",
+    dialogueMode: "半剧情 + 强解释"
+  },
+  suspense_commerce: {
+    name: "悬疑卖货",
+    conversionGoal: "用异常问题拉停留，再用产品反转",
+    productExposure: "答案揭晓时集中露出",
+    dialogueMode: "悬念台词 + 结尾转化"
+  },
+  comic_commerce: {
+    name: "漫画卖货",
+    conversionGoal: "用夸张情绪放大痛点",
+    productExposure: "道具化产品露出",
+    dialogueMode: "高密度字幕 + 配音"
+  },
+  guofeng_commerce: {
+    name: "古风卖货",
+    conversionGoal: "用国风场景抬高商品调性",
+    productExposure: "场景化陈列 + 使用动作",
+    dialogueMode: "古风台词 + 现代卖点"
+  },
+  xianxia_commerce: {
+    name: "仙侠卖货",
+    conversionGoal: "用爽点设定制造记忆点",
+    productExposure: "法器化 / 宝物化露出",
+    dialogueMode: "设定台词 + 反转收口"
   }
 };
 
@@ -52,44 +53,45 @@ const modelConfigs = {
   Sora2: {
     name: "Sora2",
     duration: 12,
-    template: "4 CUT 时间线",
+    template: "4 CUT 转化板",
     cost: 150,
-    segmentA: "EP01-S01 · Sora2 · 12s · 4 CUT",
-    segmentADesc: "女主冲后台，男主拦截，女二误会，最后转入消防通道收钩子。",
-    segmentB: "EP01-S02 · Sora2 · 12s · 4 CUT",
-    segmentBDesc: "男主解释证据缺口，女主不信，保镖追近，关系继续拉扯。",
-    segmentC: "EP01-S03 · Sora2 · 12s · 4 CUT",
-    segmentCDesc: "女二误会升级，媒体冲来，男主决定当场反转。",
+    segmentA: "素材 01 · 冲突开场 · 12s",
+    segmentADesc: "熬夜暗沉导致约会前状态翻车，产品作为解决方案出现。",
+    segmentB: "素材 02 · 质地证明 · 12s",
+    segmentBDesc: "通过近景质地、吸收速度和次日妆效降低购买阻力。",
+    segmentC: "素材 03 · 反转收口 · 12s",
+    segmentCDesc: "从躲镜头到主动赴约，用情绪转变完成转化。",
     cuts: [
-      ["CUT 1 · 00:00-00:03", "女主推门闯入后台，手机里的偷拍视频掠过画面。", "台词：无。音效：门响。"],
-      ["CUT 2 · 00:03-00:06", "男主拦住她，低声说“还差最后一环”。", "台词归属：男主。"],
-      ["CUT 3 · 00:06-00:09", "女二回眸看到两人对峙，误会加深。", "人物：女二入镜。"],
-      ["CUT 4 · 00:09-00:12", "保镖逼近，男主拉女主进入消防通道，留下反问钩子。", "钩子 CUT。"]
+      ["CUT 1 · 00:00-00:03", "女主看镜子，发现熬夜暗沉和卡粉。", "钩子：明天见前任，状态却翻车。"],
+      ["CUT 2 · 00:03-00:06", "闺蜜把精华推到镜头前，质地近景。", "产品露出：瓶身 + 质地。"],
+      ["CUT 3 · 00:06-00:09", "睡前使用，第二天自然光下皮肤状态变好。", "证明点：不油腻、次日透亮。"],
+      ["CUT 4 · 00:09-00:12", "女主收到消息，主动对镜头微笑。", "收口：不用躲镜头。"]
     ]
   },
   Seedance2: {
     name: "Seedance 2.0",
     duration: 15,
-    template: "4 CUT 丰富板",
+    template: "5 CUT 情绪板",
     cost: 1800,
-    segmentA: "EP01-S01 · Seedance 2.0 · 15s · 4 CUT",
-    segmentADesc: "女主冲后台，先交代证据，再给男主一个停顿镜头。",
-    segmentB: "EP01-S02 · Seedance 2.0 · 15s · 4 CUT",
-    segmentBDesc: "男主解释证据缺口，女主质问，关系往前推进一层。",
-    segmentC: "EP01-S03 · Seedance 2.0 · 15s · 4 CUT",
-    segmentCDesc: "女二误会升级，媒体闪光灯打进来，男主准备反转。",
+    segmentA: "素材 01 · 情绪开场 · 15s",
+    segmentADesc: "增加人物情绪停顿和产品使用过程，适合更强视觉表现。",
+    segmentB: "素材 02 · 质地证明 · 15s",
+    segmentBDesc: "把质地、吸收、第二天妆效拆成更完整的证明链。",
+    segmentC: "素材 03 · 反转收口 · 15s",
+    segmentCDesc: "保留人物反转和产品记忆点，适合高客单商品。",
     cuts: [
-      ["CUT 1 · 00:00-00:04", "女主冲入后台，镜头给到证据和目标。", "建立主冲突。"],
-      ["CUT 2 · 00:04-00:08", "男主拦截并说明还差最后一环。", "台词归属：男主。"],
-      ["CUT 3 · 00:08-00:12", "女二误会，媒体冲来，情绪拉高。", "人物：女二。"],
-      ["CUT 4 · 00:12-00:15", "男主拉人撤离，女主抛出质问钩子。", "15 秒版收口。"]
+      ["CUT 1 · 00:00-00:04", "女主约会前一晚看镜子，状态焦虑。", "钩子：皮肤状态翻车。"],
+      ["CUT 2 · 00:04-00:07", "闺蜜递出精华，台词点出别再只靠遮瑕。", "产品露出：瓶身。"],
+      ["CUT 3 · 00:07-00:10", "质地推开，快速吸收，女主睡前使用。", "证明点：不油腻。"],
+      ["CUT 4 · 00:10-00:13", "第二天自然光下上妆不卡粉。", "证明点：次日状态。"],
+      ["CUT 5 · 00:13-00:15", "女主主动赴约，露出购买引导。", "转化收口。"]
     ]
   }
 };
 
 const state = {
   currentView: "dashboard",
-  styleRoute: "live_action_stylized",
+  styleRoute: "ad_drama",
   textModel: "DeepSeek",
   imageModel: "GPT Image2",
   videoModel: "Sora2",
@@ -97,6 +99,9 @@ const state = {
   isRecharged: false,
   walletBalance: 0,
   walletFrozen: 0,
+  productName: "晚安修护精华",
+  productUrl: "https://example.com/product/night-repair-serum",
+  targetPlatform: "抖音 / 小红书",
   seedancePipelineStatus: "待探测"
 };
 
@@ -109,6 +114,10 @@ const imageModelSelect = document.querySelector("#imageModelSelect");
 const submitModal = document.querySelector("#submitModal");
 const rechargeModal = document.querySelector("#rechargeModal");
 const gateBanner = document.querySelector("#gateBanner");
+const productNameInput = document.querySelector("#productNameInput");
+const productUrlInput = document.querySelector("#productUrlInput");
+const platformSelect = document.querySelector("#platformSelect");
+const scriptInput = document.querySelector("#scriptInput");
 
 function setBind(name, value) {
   document.querySelectorAll(`[data-bind="${name}"]`).forEach((node) => {
@@ -141,14 +150,19 @@ function showView(view) {
   subtitleNode.textContent = copy[1];
 }
 
+function renderProduct() {
+  setBind("productName", state.productName);
+  setBind("targetPlatform", state.targetPlatform);
+}
+
 function renderStyleRoute() {
   const route = styleRoutes[state.styleRoute];
   document.querySelectorAll("[data-style-route]").forEach((node) => {
     node.classList.toggle("selected", node.dataset.styleRoute === state.styleRoute);
   });
   setBind("styleRouteName", route.name);
-  setBind("recommendedFaceSource", route.recommendedFaceSource);
-  setBind("consistencyLevel", route.consistencyLevel);
+  setBind("conversionGoal", route.conversionGoal);
+  setBind("productExposure", route.productExposure);
   setBind("dialogueMode", route.dialogueMode);
 }
 
@@ -165,7 +179,7 @@ function renderModel() {
   setBind("currentTemplateName", config.template);
   setBind("estimatedCost", `${currentCost().toLocaleString("zh-CN")} 点`);
   setBind("remainingBalance", `${remainingBalance().toLocaleString("zh-CN")} 创作点`);
-  setBind("selectedSegmentCount", `${state.segmentCount} 段`);
+  setBind("selectedSegmentCount", `${state.segmentCount} 条`);
 }
 
 function renderScript() {
@@ -188,13 +202,11 @@ function renderScript() {
   setBind("cut4Title", config.cuts[3][0]);
   setBind("cut4Body", config.cuts[3][1]);
   setBind("cut4Note", config.cuts[3][2]);
-  setBind("templateLine1", "Sora2 · 12s：4 CUT 时间线");
-  setBind("templateLine2", "Seedance 2.0 · 15s：4 CUT 丰富板");
 }
 
 function renderAccountGate() {
   const accountState = state.isRecharged ? "已充值" : "未充值";
-  const accountHint = state.isRecharged ? "生成已解锁" : "只能查看示例";
+  const accountHint = state.isRecharged ? "生成已解锁" : "只能查看展示";
 
   setBind("accountState", accountState);
   setBind("accountHint", accountHint);
@@ -206,6 +218,7 @@ function renderAccountGate() {
 }
 
 function renderAll() {
+  renderProduct();
   renderStyleRoute();
   renderModel();
   renderScript();
@@ -242,9 +255,7 @@ function requireRecharge(event) {
   return true;
 }
 
-navItems.forEach((item) => {
-  item.addEventListener("click", () => showView(item.dataset.view));
-});
+navItems.forEach((item) => item.addEventListener("click", () => showView(item.dataset.view)));
 
 document.querySelectorAll("[data-style-route]").forEach((item) => {
   item.addEventListener("click", () => {
@@ -270,17 +281,23 @@ imageModelSelect.addEventListener("change", (event) => {
   renderAll();
 });
 
-document.querySelectorAll("[data-open-submit]").forEach((button) => {
-  button.addEventListener("click", openSubmitModal);
+productNameInput.addEventListener("input", (event) => {
+  state.productName = event.target.value || "未命名商品";
+  renderAll();
 });
 
-document.querySelectorAll("[data-open-recharge]").forEach((button) => {
-  button.addEventListener("click", openRechargeModal);
+productUrlInput.addEventListener("input", (event) => {
+  state.productUrl = event.target.value;
 });
 
-document.querySelectorAll("[data-locked-action]").forEach((button) => {
-  button.addEventListener("click", requireRecharge);
+platformSelect.addEventListener("change", (event) => {
+  state.targetPlatform = event.target.value;
+  renderAll();
 });
+
+document.querySelectorAll("[data-open-submit]").forEach((button) => button.addEventListener("click", openSubmitModal));
+document.querySelectorAll("[data-open-recharge]").forEach((button) => button.addEventListener("click", openRechargeModal));
+document.querySelectorAll("[data-locked-action]").forEach((button) => button.addEventListener("click", requireRecharge));
 
 document.querySelector("#rechargeButton").addEventListener("click", openRechargeModal);
 document.querySelector("#closeModal").addEventListener("click", closeSubmitModal);
@@ -306,12 +323,12 @@ document.querySelector("#confirmSubmit").addEventListener("click", () => {
   state.walletFrozen += cost;
   closeSubmitModal();
   renderAll();
-  alert("已提交生成任务。");
+  alert("已提交剧情广告生成任务。");
 });
 
 document.querySelector("#refreshSegments").addEventListener("click", (event) => {
   if (requireRecharge(event)) return;
-  alert(`已按 ${currentConfig().name} 的 ${currentConfig().duration} 秒统一时长重新分段。`);
+  alert(`已按 ${currentConfig().name} 的 ${currentConfig().duration} 秒统一时长重新生成剧情广告脚本。`);
 });
 
 document.querySelector("#consentAction").addEventListener("click", (event) => {
@@ -333,7 +350,7 @@ document.querySelector("#assetAction").addEventListener("click", (event) => {
 });
 
 document.querySelector("#fallbackAction").addEventListener("click", () => {
-  state.seedancePipelineStatus = "已切兜底";
+  state.seedancePipelineStatus = "已切入兜底";
   state.videoModel = "Sora2";
   renderAll();
 });
@@ -372,7 +389,6 @@ showView(state.currentView);
   const backendStatusNode = document.querySelector("#backendStatus");
   const submitResultNode = document.querySelector("#submitResult");
   const rechargeCodeInput = document.querySelector("#rechargeCodeInput");
-  const scriptInput = document.querySelector("#scriptInput");
 
   async function fetchJSON(url, options = {}) {
     const response = await fetch(url, {
@@ -380,9 +396,7 @@ showView(state.currentView);
       ...options
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      throw new Error(data.error || `HTTP ${response.status}`);
-    }
+    if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
     return data;
   }
 
@@ -394,7 +408,7 @@ showView(state.currentView);
     renderAll();
   }
 
-  async function loadWalletFromStorage() {
+  function loadWalletFromStorage() {
     const token = localStorage.getItem(storageKey);
     const balance = Number(localStorage.getItem(balanceKey) || 0);
     if (token) {
@@ -431,8 +445,6 @@ showView(state.currentView);
           method: "POST",
           body: JSON.stringify({ code })
         });
-        localStorage.setItem(storageKey, result.walletToken);
-        localStorage.setItem(balanceKey, String(result.balance));
         syncWallet(result.balance, result.walletToken);
         closeRechargeModal();
         backendStatusNode.textContent = `充值成功，余额 ${result.balance} 点。`;
@@ -459,6 +471,9 @@ showView(state.currentView);
           method: "POST",
           headers: { authorization: `Bearer ${token}` },
           body: JSON.stringify({
+            productName: state.productName,
+            productUrl: state.productUrl,
+            targetPlatform: state.targetPlatform,
             styleRoute: state.styleRoute,
             textModel: state.textModel,
             imageModel: state.imageModel,
@@ -467,9 +482,10 @@ showView(state.currentView);
             script: scriptInput.value,
             storyboard: {
               duration: currentConfig().duration,
-              template: currentConfig().template
+              template: currentConfig().template,
+              commerceGoal: styleRoutes[state.styleRoute].conversionGoal
             },
-            prompt: `Style ${state.styleRoute}, video ${state.videoModel}`
+            prompt: `${state.productName}，${styleRoutes[state.styleRoute].name}，${state.targetPlatform} 电商剧情广告。`
           })
         });
         syncWallet(response.balanceAfter, response.walletToken);
