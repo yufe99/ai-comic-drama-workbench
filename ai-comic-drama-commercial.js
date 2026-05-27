@@ -348,3 +348,140 @@ rechargeModal.addEventListener("click", (event) => {
 
 renderAll();
 showView(state.currentView);
+
+(() => {
+  const storageKey = "ai-drama-wallet-token";
+  const balanceKey = "ai-drama-wallet-balance";
+  const configState = document.createElement("div");
+  configState.className = "modal-block";
+  configState.innerHTML = '<p><strong>后端状态</strong></p><div class="flat-list" id="backendStatus">正在检查...</div>';
+  rechargeModal.querySelector(".recharge-layout").after(configState);
+
+  const rechargeLayout = rechargeModal.querySelector(".recharge-layout");
+  const codeField = document.createElement("label");
+  codeField.className = "field";
+  codeField.innerHTML = '<span>充值码</span><input id="rechargeCodeInput" placeholder="输入充值码后解锁生成" />';
+  rechargeLayout.appendChild(codeField);
+
+  const submitSummary = submitModal.querySelector(".modal-summary");
+  const submitInfo = document.createElement("div");
+  submitInfo.className = "modal-block";
+  submitInfo.innerHTML = '<p><strong>真实提交</strong></p><div class="flat-list" id="submitResult">等待提交。</div>';
+  submitSummary.after(submitInfo);
+
+  const backendStatusNode = document.querySelector("#backendStatus");
+  const submitResultNode = document.querySelector("#submitResult");
+  const rechargeCodeInput = document.querySelector("#rechargeCodeInput");
+  const scriptInput = document.querySelector("#scriptInput");
+
+  async function fetchJSON(url, options = {}) {
+    const response = await fetch(url, {
+      headers: { "content-type": "application/json", ...(options.headers || {}) },
+      ...options
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.error || `HTTP ${response.status}`);
+    }
+    return data;
+  }
+
+  function syncWallet(balance, token) {
+    state.isRecharged = true;
+    state.walletBalance = Number(balance || 0);
+    if (token) localStorage.setItem(storageKey, token);
+    localStorage.setItem(balanceKey, String(state.walletBalance));
+    renderAll();
+  }
+
+  async function loadWalletFromStorage() {
+    const token = localStorage.getItem(storageKey);
+    const balance = Number(localStorage.getItem(balanceKey) || 0);
+    if (token) {
+      state.isRecharged = true;
+      state.walletBalance = balance;
+      renderAll();
+    }
+  }
+
+  async function loadBackendConfig() {
+    try {
+      const config = await fetchJSON("/api/config");
+      const readyModels = Object.entries(config.models || {})
+        .map(([name, detail]) => `${name}: ${detail.configured ? "ready" : "missing"}`)
+        .join("\n");
+      backendStatusNode.textContent = `wallet=${config.walletMode}\n${readyModels}`;
+    } catch (error) {
+      backendStatusNode.textContent = `后端不可用：${error.message}`;
+    }
+  }
+
+  document.querySelector("#simulateRecharge").addEventListener(
+    "click",
+    async (event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const code = rechargeCodeInput.value.trim();
+      if (!code) {
+        backendStatusNode.textContent = "请输入充值码。";
+        return;
+      }
+      try {
+        const result = await fetchJSON("/api/recharge", {
+          method: "POST",
+          body: JSON.stringify({ code })
+        });
+        localStorage.setItem(storageKey, result.walletToken);
+        localStorage.setItem(balanceKey, String(result.balance));
+        syncWallet(result.balance, result.walletToken);
+        closeRechargeModal();
+        backendStatusNode.textContent = `充值成功，余额 ${result.balance} 点。`;
+      } catch (error) {
+        backendStatusNode.textContent = `充值失败：${error.message}`;
+      }
+    },
+    true
+  );
+
+  document.querySelector("#confirmSubmit").addEventListener(
+    "click",
+    async (event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const token = localStorage.getItem(storageKey);
+      if (!token) {
+        openRechargeModal();
+        backendStatusNode.textContent = "请先充值。";
+        return;
+      }
+      try {
+        const response = await fetchJSON("/api/generate", {
+          method: "POST",
+          headers: { authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            styleRoute: state.styleRoute,
+            textModel: state.textModel,
+            imageModel: state.imageModel,
+            videoModel: state.videoModel,
+            segmentCount: state.segmentCount,
+            script: scriptInput.value,
+            storyboard: {
+              duration: currentConfig().duration,
+              template: currentConfig().template
+            },
+            prompt: `Style ${state.styleRoute}, video ${state.videoModel}`
+          })
+        });
+        syncWallet(response.balanceAfter, response.walletToken);
+        submitResultNode.textContent = `任务 ${response.job.jobId} 已提交，剩余 ${response.balanceAfter} 点。`;
+        closeSubmitModal();
+      } catch (error) {
+        submitResultNode.textContent = `提交失败：${error.message}`;
+      }
+    },
+    true
+  );
+
+  loadWalletFromStorage();
+  loadBackendConfig();
+})();
