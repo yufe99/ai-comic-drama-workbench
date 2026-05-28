@@ -462,6 +462,11 @@ p {
   margin-top: 14px;
 }
 
+.compact-form {
+  grid-template-columns: repeat(4, 1fr);
+  margin-bottom: 14px;
+}
+
 .field {
   display: grid;
   gap: 10px;
@@ -599,6 +604,12 @@ input {
 .warning-box.neutral {
   border-color: var(--gold);
   background: #1a130d;
+}
+
+.segment-list button.segment {
+  width: 100%;
+  color: inherit;
+  text-align: left;
 }
 
 .warning-box {
@@ -891,6 +902,37 @@ input {
   display: block;
   margin: 8px 0;
   color: var(--gold-2);
+}
+
+.upload-panel {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: #100f0d;
+}
+
+.product-image-preview {
+  display: grid;
+  place-items: center;
+  min-height: 180px;
+  overflow: hidden;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: #0b0b0a;
+  color: var(--muted);
+}
+
+.product-image-preview img {
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+}
+
+.upload-panel small {
+  color: var(--muted);
 }
 
 .recharge-layout {

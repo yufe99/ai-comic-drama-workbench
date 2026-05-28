@@ -1,6 +1,6 @@
 const viewCopy = {
   dashboard: ["项目", "把商品资料、品牌禁忌和目标人群，变成连续爽剧、角色资产、故事板和自然植入的视频素材。"],
-  product: ["资料", "支持商品链接、手工输入、品牌资料、植入规则和连续爽剧设定。"],
+  product: ["资料", "支持商品链接、手工输入、品牌资料和产品图同步。"],
   styles: ["剧情路线", "广告剧情是底层能力，悬疑、漫画、古风、仙侠都是品牌爽剧的表现风格。"],
   models: ["模型", "视频模型选一次，整批素材统一按该模型时长生成。"],
   script: ["脚本", "先写连续爽剧，再把商品作为道具、习惯或关系线索自然植入。"],
@@ -95,7 +95,13 @@ const state = {
   textModel: "DeepSeek",
   imageModel: "GPT Image2",
   videoModel: "Sora2",
-  segmentCount: 24,
+  segmentCount: 6,
+  seriesMode: "series",
+  episodeDuration: 60,
+  episodeCount: 6,
+  activeEpisodeIndex: 0,
+  assetPreviewStatus: "资产预览待生成",
+  storyboardPreviewStatus: "待预生成",
   isRecharged: false,
   walletBalance: 0,
   walletFrozen: 0,
@@ -107,6 +113,8 @@ const state = {
   brandBrief: "品牌调性高级、克制、可信，不做夸张承诺。可以说“改善熬夜后的暗沉观感”，不要说“立刻美白”。",
   placementRules: "商品不能像硬广一样突然出现，要作为女主解决困境的生活道具出现。每 12-15 秒片段最多 1 次主露出，台词不直接喊购买。",
   seriesPremise: "女主被前任和职场竞争者看轻，靠一次次反转证明自己。精华不是广告主角，而是她每次重要场合前的固定仪式和状态锚点。",
+  productImageName: "",
+  productImagePreview: "",
   seedancePipelineStatus: "待探测"
 };
 
@@ -127,7 +135,91 @@ const productBriefInput = document.querySelector("#productBriefInput");
 const brandBriefInput = document.querySelector("#brandBriefInput");
 const placementRulesInput = document.querySelector("#placementRulesInput");
 const seriesPremiseInput = document.querySelector("#seriesPremiseInput");
+const seriesModeSelect = document.querySelector("#seriesModeSelect");
+const episodeDurationSelect = document.querySelector("#episodeDurationSelect");
+const episodeCountInput = document.querySelector("#episodeCountInput");
+const activeEpisodeSelect = document.querySelector("#activeEpisodeSelect");
+const episodeList = document.querySelector("#episodeList");
+const activeEpisodeBeats = document.querySelector("#activeEpisodeBeats");
+const productImageInput = document.querySelector("#productImageInput");
+const productImagePreview = document.querySelector("#productImagePreview");
+const importProductButton = document.querySelector("#importProductButton");
+const previewScriptButton = document.querySelector("#previewScriptButton");
+const regenerateScriptButton = document.querySelector("#regenerateScriptButton");
 const scriptInput = document.querySelector("#scriptInput");
+
+function storyboardCountForEpisode() {
+  return Math.max(1, Math.ceil(state.episodeDuration / currentConfig().duration));
+}
+
+function totalStoryboardCount() {
+  return state.episodeCount * storyboardCountForEpisode();
+}
+
+function episodeTitle(index) {
+  return `EP${String(index + 1).padStart(2, "0")}`;
+}
+
+function episodeSummary(index) {
+  const summaries = [
+    "被前任轻视，女主在发布会前夜完成第一次状态重启。",
+    "竞品数据被调包，女主用备份方案当场反转。",
+    "闺蜜身份出现裂痕，商品成为女主独处时的稳定仪式。",
+    "老板临时加压，女主把危机变成升职机会。",
+    "前任试图挖角，女主第一次主动设局。",
+    "最终发布会反杀，所有误会和背叛集中爆发。"
+  ];
+  return summaries[index] || "延续主线冲突，推进一次误会、一次反转和一个自然植入场景。";
+}
+
+function mockProductFromUrl(url) {
+  const isSerum = /serum|repair|night/i.test(url);
+  if (isSerum) {
+    return {
+      name: "晚安修护精华",
+      brief: "一款夜间修护精华，主打熬夜暗沉、屏障脆弱、第二天上妆卡粉。质地清爽，适合睡前使用，核心卖点是夜间修护和次日透亮。",
+      brand: "品牌调性高级、克制、可信，不做夸张承诺。可以说“改善熬夜后的暗沉观感”，不要说“立刻美白”。",
+      image: "./assets/preview/litmedia-board-wide.png"
+    };
+  }
+  return {
+    name: "剧情植入商品",
+    brief: "根据商品链接自动提炼出的商品简介会同步到这里；正式版会调用商品解析接口抓取标题、主图、卖点和详情页素材。",
+    brand: "请补充品牌调性、禁用词、功效边界和必须露出的商品信息。",
+    image: "./assets/preview/litmedia-submit-panel.png"
+  };
+}
+
+function syncImportedProduct(product) {
+  state.productName = product.name;
+  state.productBrief = product.brief;
+  state.brandBrief = product.brand;
+  state.productImageName = "imported-product-image";
+  state.productImagePreview = product.image;
+  productNameInput.value = product.name;
+  productBriefInput.value = product.brief;
+  brandBriefInput.value = product.brand;
+  productImagePreview.innerHTML = `<img alt="产品图预览" src="${product.image}" />`;
+  state.assetPreviewStatus = "商品资料和产品图已同步到资产库";
+  renderAll();
+}
+
+function buildScriptPreview() {
+  return `${episodeTitle(state.activeEpisodeIndex)}｜${state.productName} 品牌爽剧
+
+本集功能：${episodeSummary(state.activeEpisodeIndex)}
+
+剧情节奏：
+1. 开场先给人物困境，不露商品。
+2. 中段让人物做一个选择，商品作为生活道具自然出现。
+3. 结尾给反转或误会，推动下一集。
+
+植入规则：
+${state.placementRules}
+
+连续设定：
+${state.seriesPremise}`;
+}
 
 function setBind(name, value) {
   document.querySelectorAll(`[data-bind="${name}"]`).forEach((node) => {
@@ -144,7 +236,7 @@ function currentDurationText() {
 }
 
 function currentCost() {
-  return state.segmentCount * currentConfig().cost;
+  return totalStoryboardCount() * currentConfig().cost;
 }
 
 function remainingBalance() {
@@ -163,6 +255,67 @@ function showView(view) {
 function renderProduct() {
   setBind("productName", state.productName);
   setBind("targetPlatform", state.targetPlatform);
+}
+
+function renderEpisodes() {
+  const count = totalStoryboardCount();
+  const perEpisode = storyboardCountForEpisode();
+  state.segmentCount = count;
+  state.activeEpisodeIndex = Math.min(state.activeEpisodeIndex, state.episodeCount - 1);
+
+  setBind("seriesModeText", state.seriesMode === "single" ? "单集" : "连续剧");
+  setBind("episodeDurationText", `${state.episodeDuration}秒`);
+  setBind("seriesStructureText", `${state.episodeCount} 集 × ${state.episodeDuration} 秒`);
+  setBind("activeEpisodeTitle", episodeTitle(state.activeEpisodeIndex));
+  setBind("activeEpisodeSegmentText", `${perEpisode} 张`);
+  setBind("assetPreviewStatus", state.assetPreviewStatus);
+  setBind("storyboardPreviewStatus", state.storyboardPreviewStatus);
+
+  if (episodeCountInput) {
+    episodeCountInput.value = state.episodeCount;
+    episodeCountInput.disabled = state.seriesMode === "single";
+  }
+  if (seriesModeSelect) seriesModeSelect.value = state.seriesMode;
+  if (episodeDurationSelect) episodeDurationSelect.value = String(state.episodeDuration);
+
+  if (activeEpisodeSelect) {
+    activeEpisodeSelect.innerHTML = "";
+    Array.from({ length: state.episodeCount }).forEach((_, index) => {
+      const option = document.createElement("option");
+      option.value = String(index);
+      option.textContent = `${episodeTitle(index)} · ${perEpisode} 张故事板`;
+      activeEpisodeSelect.appendChild(option);
+    });
+    activeEpisodeSelect.value = String(state.activeEpisodeIndex);
+  }
+
+  if (episodeList) {
+    episodeList.innerHTML = "";
+    Array.from({ length: state.episodeCount }).forEach((_, index) => {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = `segment ${index === state.activeEpisodeIndex ? "active" : ""}`;
+      item.innerHTML = `<strong>${episodeTitle(index)} · ${state.episodeDuration}秒 · ${perEpisode} 张故事板</strong><span>${episodeSummary(index)}</span>`;
+      item.addEventListener("click", () => {
+        state.activeEpisodeIndex = index;
+        renderAll();
+      });
+      episodeList.appendChild(item);
+    });
+  }
+
+  if (activeEpisodeBeats) {
+    activeEpisodeBeats.innerHTML = "";
+    [
+      `${episodeTitle(state.activeEpisodeIndex)}：${episodeSummary(state.activeEpisodeIndex)}`,
+      `拆分规则：一张故事板 = 一条 ${currentConfig().duration} 秒视频。`,
+      `本集预计 ${perEpisode} 张故事板，全剧预计 ${count} 张故事板。`
+    ].forEach((text) => {
+      const div = document.createElement("div");
+      div.textContent = text;
+      activeEpisodeBeats.appendChild(div);
+    });
+  }
 }
 
 function renderStyleRoute() {
@@ -189,10 +342,11 @@ function renderModel() {
   setBind("currentTemplateName", config.template);
   setBind("estimatedCost", `${currentCost().toLocaleString("zh-CN")} 点`);
   setBind("remainingBalance", `${remainingBalance().toLocaleString("zh-CN")} 创作点`);
-  setBind("selectedSegmentCount", `${state.segmentCount} 条`);
+  setBind("selectedSegmentCount", `${totalStoryboardCount()} 张`);
 }
 
 function renderScript() {
+  renderEpisodes();
   const config = currentConfig();
   setBind("segmentA", config.segmentA);
   setBind("segmentADesc", config.segmentADesc);
@@ -305,6 +459,33 @@ platformSelect.addEventListener("change", (event) => {
   renderAll();
 });
 
+seriesModeSelect.addEventListener("change", (event) => {
+  state.seriesMode = event.target.value;
+  if (state.seriesMode === "single") {
+    state.episodeCount = 1;
+    state.activeEpisodeIndex = 0;
+  } else if (state.episodeCount < 2) {
+    state.episodeCount = 6;
+  }
+  renderAll();
+});
+
+episodeDurationSelect.addEventListener("change", (event) => {
+  state.episodeDuration = Number(event.target.value);
+  renderAll();
+});
+
+episodeCountInput.addEventListener("input", (event) => {
+  state.episodeCount = Math.max(1, Math.min(60, Number(event.target.value || 1)));
+  if (state.seriesMode === "single") state.episodeCount = 1;
+  renderAll();
+});
+
+activeEpisodeSelect.addEventListener("change", (event) => {
+  state.activeEpisodeIndex = Number(event.target.value);
+  renderAll();
+});
+
 importModeSelect.addEventListener("change", (event) => {
   state.importMode = event.target.value;
 });
@@ -323,6 +504,39 @@ placementRulesInput.addEventListener("input", (event) => {
 
 seriesPremiseInput.addEventListener("input", (event) => {
   state.seriesPremise = event.target.value;
+});
+
+importProductButton.addEventListener("click", (event) => {
+  if (requireRecharge(event)) return;
+  state.importMode = "mixed";
+  importModeSelect.value = "mixed";
+  syncImportedProduct(mockProductFromUrl(state.productUrl));
+});
+
+previewScriptButton.addEventListener("click", (event) => {
+  if (requireRecharge(event)) return;
+  scriptInput.value = buildScriptPreview();
+});
+
+regenerateScriptButton.addEventListener("click", (event) => {
+  if (requireRecharge(event)) return;
+  scriptInput.value = `${buildScriptPreview()}
+
+新版钩子：女主在关键场合前被对手当众轻视，她没有解释，只在深夜完成自己的固定仪式。第二天，她用一份提前准备的证据完成反击。`;
+});
+
+productImageInput.addEventListener("change", () => {
+  const file = productImageInput.files?.[0];
+  if (!file) return;
+  state.productImageName = file.name;
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    state.productImagePreview = String(reader.result || "");
+    productImagePreview.innerHTML = `<img alt="产品图预览" src="${state.productImagePreview}" />`;
+    state.assetPreviewStatus = `已上传产品图：${file.name}`;
+    renderAll();
+  });
+  reader.readAsDataURL(file);
 });
 
 document.querySelectorAll("[data-open-submit]").forEach((button) => button.addEventListener("click", openSubmitModal));
@@ -358,7 +572,32 @@ document.querySelector("#confirmSubmit").addEventListener("click", () => {
 
 document.querySelector("#refreshSegments").addEventListener("click", (event) => {
   if (requireRecharge(event)) return;
-  alert(`已按 ${currentConfig().name} 的 ${currentConfig().duration} 秒统一时长重新生成剧情广告脚本。`);
+  alert(`已按 ${state.episodeCount} 集 × ${state.episodeDuration} 秒，重新拆分为 ${totalStoryboardCount()} 张故事板。`);
+});
+
+document.querySelector("#addEpisodeButton").addEventListener("click", () => {
+  state.seriesMode = "series";
+  state.episodeCount = Math.min(60, state.episodeCount + 1);
+  renderAll();
+});
+
+document.querySelector("#removeEpisodeButton").addEventListener("click", () => {
+  state.episodeCount = Math.max(1, state.episodeCount - 1);
+  if (state.episodeCount === 1) state.seriesMode = "single";
+  state.activeEpisodeIndex = Math.min(state.activeEpisodeIndex, state.episodeCount - 1);
+  renderAll();
+});
+
+document.querySelector("#generateAssetPreview").addEventListener("click", (event) => {
+  if (requireRecharge(event)) return;
+  state.assetPreviewStatus = "资产预览已生成";
+  renderAll();
+});
+
+document.querySelector("#generateStoryboardPreview").addEventListener("click", (event) => {
+  if (requireRecharge(event)) return;
+  state.storyboardPreviewStatus = `${episodeTitle(state.activeEpisodeIndex)} 故事板已生成`;
+  renderAll();
 });
 
 document.querySelector("#consentAction").addEventListener("click", (event) => {
@@ -508,16 +747,27 @@ showView(state.currentView);
             brandBrief: state.brandBrief,
             placementRules: state.placementRules,
             seriesPremise: state.seriesPremise,
+            productImageName: state.productImageName,
+            productImagePreview: state.productImagePreview,
             targetPlatform: state.targetPlatform,
             styleRoute: state.styleRoute,
+            seriesMode: state.seriesMode,
+            episodeDuration: state.episodeDuration,
+            episodeCount: state.episodeCount,
+            activeEpisode: episodeTitle(state.activeEpisodeIndex),
+            storyboardCount: totalStoryboardCount(),
+            storyboardCountPerEpisode: storyboardCountForEpisode(),
             textModel: state.textModel,
             imageModel: state.imageModel,
             videoModel: state.videoModel,
-            segmentCount: state.segmentCount,
+            segmentCount: totalStoryboardCount(),
             script: scriptInput.value,
             storyboard: {
               duration: currentConfig().duration,
               template: currentConfig().template,
+              rule: `一张故事板生成一条 ${currentConfig().duration} 秒视频`,
+              activeEpisode: episodeTitle(state.activeEpisodeIndex),
+              storyboardCountPerEpisode: storyboardCountForEpisode(),
               dramaPriority: "先好看，再植入；禁止硬广口播",
               commerceGoal: styleRoutes[state.styleRoute].conversionGoal,
               placementRules: state.placementRules

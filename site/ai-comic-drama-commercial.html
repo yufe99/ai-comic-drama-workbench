@@ -100,8 +100,9 @@
           </section>
 
           <section class="metric-row">
-            <article><span>预计素材</span><strong data-bind="selectedSegmentCount">24 条</strong></article>
-            <article><span>单条时长</span><strong data-bind="currentDurationText">12秒</strong></article>
+            <article><span>剧集模式</span><strong data-bind="seriesModeText">连续剧</strong></article>
+            <article><span>故事板</span><strong data-bind="selectedSegmentCount">6 张</strong></article>
+            <article><span>单集时长</span><strong data-bind="episodeDurationText">60秒</strong></article>
             <article><span>预计消耗</span><strong data-bind="estimatedCost">3,600 点</strong></article>
             <article><span>余额</span><strong data-bind="walletBalance">0 创作点</strong></article>
             <article><span>状态</span><strong data-bind="accountHint">只能查看展示</strong></article>
@@ -116,7 +117,7 @@
                   <h2>资料导入</h2>
                   <p>可填商品链接，也可手工输入商品、简介、品牌资料和禁忌。系统先展开连续爽剧，再把商品自然放进故事。</p>
                 </div>
-                <button class="secondary locked-action" data-locked-action>生成剧集 brief</button>
+                <button class="secondary locked-action" id="importProductButton" data-locked-action>一键导入</button>
               </div>
               <div class="form-grid">
                 <label class="field">
@@ -151,14 +152,6 @@
                 <label class="field field-wide">
                   <span>品牌资料 / 口径</span>
                   <textarea id="brandBriefInput">品牌调性高级、克制、可信，不做夸张承诺。可以说“改善熬夜后的暗沉观感”，不要说“立刻美白”。</textarea>
-                </label>
-                <label class="field field-wide">
-                  <span>植入规则</span>
-                  <textarea id="placementRulesInput">商品不能像硬广一样突然出现，要作为女主解决困境的生活道具出现。每 12-15 秒片段最多 1 次主露出，台词不直接喊购买。</textarea>
-                </label>
-                <label class="field field-wide">
-                  <span>连续爽剧设定</span>
-                  <textarea id="seriesPremiseInput">女主被前任和职场竞争者看轻，靠一次次反转证明自己。精华不是广告主角，而是她每次重要场合前的固定仪式和状态锚点。</textarea>
                 </label>
               </div>
             </article>
@@ -295,7 +288,7 @@
                 <div><span>图片模型</span><strong data-bind="selectedImageModel">GPT Image2</strong></div>
                 <div><span>视频模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
                 <div><span>统一时长</span><strong data-bind="currentDurationText">12秒</strong></div>
-                <div><span>素材数量</span><strong data-bind="selectedSegmentCount">24 条</strong></div>
+                <div><span>故事板数量</span><strong data-bind="selectedSegmentCount">6 张</strong></div>
               </div>
             </aside>
           </section>
@@ -306,10 +299,49 @@
             <article class="panel script-editor">
               <div class="panel-head">
                 <div>
-                  <h2>剧情广告脚本</h2>
-                  <p>围绕商品痛点拆分 8-15 秒素材，镜头少、冲突强、产品露出明确。</p>
+                  <h2>剧集脚本</h2>
+                  <p>先定单集或连续剧，再按剧情需要拆成故事板；一张故事板生成一条 12/15 秒视频。</p>
                 </div>
                 <button class="secondary locked-action" id="refreshSegments" data-locked-action>重新生成脚本</button>
+              </div>
+              <div class="form-grid compact-form">
+                <label class="field">
+                  <span>剧集类型</span>
+                  <select id="seriesModeSelect">
+                    <option value="series">连续剧</option>
+                    <option value="single">单集</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>单集时长</span>
+                  <select id="episodeDurationSelect">
+                    <option value="30">30 秒</option>
+                    <option value="45">45 秒</option>
+                    <option value="60" selected>60 秒</option>
+                    <option value="90">90 秒</option>
+                    <option value="120">120 秒</option>
+                  </select>
+                </label>
+                <label class="field" id="episodeCountField">
+                  <span>集数</span>
+                  <input id="episodeCountInput" type="number" min="1" max="60" value="6" />
+                </label>
+                <label class="field">
+                  <span>当前集</span>
+                  <select id="activeEpisodeSelect"></select>
+                </label>
+                <label class="field field-wide">
+                  <span>植入规则</span>
+                  <textarea id="placementRulesInput">商品不能像硬广一样突然出现，要作为女主解决困境的生活道具出现。每 12-15 秒片段最多 1 次主露出，台词不直接喊购买。</textarea>
+                </label>
+                <label class="field field-wide">
+                  <span>连续爽剧设定</span>
+                  <textarea id="seriesPremiseInput">女主被前任和职场竞争者看轻，靠一次次反转证明自己。精华不是广告主角，而是她每次重要场合前的固定仪式和状态锚点。</textarea>
+                </label>
+              </div>
+              <div class="guard-actions script-actions">
+                <button class="secondary locked-action" id="previewScriptButton" data-locked-action>预览脚本</button>
+                <button class="secondary locked-action" id="regenerateScriptButton" data-locked-action>重新生成</button>
               </div>
               <textarea id="scriptInput">女主第二天要见前任，镜子里却看到熬夜暗沉和卡粉。闺蜜把晚安修护精华推到她面前：别遮了，今晚先把状态救回来。镜头切到质地推开、睡前使用、第二天自然光下皮肤变亮。女主收到前任消息，低声说：这次不用躲镜头了。</textarea>
             </article>
@@ -317,24 +349,15 @@
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>素材拆分</h2>
-                  <p>当前项目所有素材都跟随同一个视频模型。</p>
+                  <h2>剧集列表</h2>
+                  <p>可先查看每集剧情走向，也可以增加或减少集数。</p>
+                </div>
+                <div class="guard-actions">
+                  <button class="secondary" id="addEpisodeButton" type="button">增加一集</button>
+                  <button class="secondary" id="removeEpisodeButton" type="button">减少一集</button>
                 </div>
               </div>
-              <div class="segment-list">
-                <div class="segment active">
-                  <strong data-bind="segmentA">素材 01 · 冲突开场 · 12s</strong>
-                  <span data-bind="segmentADesc">熬夜暗沉导致约会前状态翻车，产品作为解决方案出现。</span>
-                </div>
-                <div class="segment">
-                  <strong data-bind="segmentB">素材 02 · 质地证明 · 12s</strong>
-                  <span data-bind="segmentBDesc">通过近景质地、吸收速度和次日妆效降低购买阻力。</span>
-                </div>
-                <div class="segment">
-                  <strong data-bind="segmentC">素材 03 · 反转收口 · 12s</strong>
-                  <span data-bind="segmentCDesc">从躲镜头到主动赴约，用情绪转变完成转化。</span>
-                </div>
-              </div>
+              <div class="segment-list" id="episodeList"></div>
             </article>
           </section>
         </section>
@@ -344,9 +367,24 @@
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>广告资产</h2>
-                  <p>商品、角色、场景、道具和品牌口径统一复用。</p>
+                  <h2>全剧资产</h2>
+                  <p>先生成资产预览，再进入全剧视频生成。</p>
                 </div>
+                <button class="secondary locked-action" id="generateAssetPreview" data-locked-action>预生成资产</button>
+              </div>
+              <div class="upload-panel">
+                <label class="field">
+                  <span>产品图上传</span>
+                  <input id="productImageInput" type="file" accept="image/*" />
+                </label>
+                <div class="product-image-preview" id="productImagePreview">
+                  <span>未上传产品图</span>
+                </div>
+                <small>用于锁定瓶身、包装、颜色、Logo 和质地参考。当前版本先本地预览，后续接 R2 持久存储。</small>
+              </div>
+              <div class="warning-box neutral">
+                <strong data-bind="assetPreviewStatus">资产预览待生成</strong>
+                <p>将生成：角色三视图、商品道具图、主场景、色卡、服装和禁忌说明。</p>
               </div>
               <div class="bible-grid">
                 <div><strong>Product</strong><p>瓶身、质地、包装、使用动作、品牌色。</p></div>
@@ -378,15 +416,18 @@
               <div class="panel-head">
                 <div>
                   <h2>故事板</h2>
-                  <p>每一格都绑定产品露出、台词和转化意图。</p>
+                  <p>先看当前集故事板，再决定是否进入全剧生成。</p>
                 </div>
-                <button class="primary locked-action" data-locked-action>导出 PNG</button>
+                <div class="guard-actions">
+                  <button class="secondary locked-action" id="generateStoryboardPreview" data-locked-action>预生成故事板</button>
+                  <button class="primary locked-action" data-locked-action>导出 PNG</button>
+                </div>
               </div>
 
               <div class="storyboard-meta">
-                <div><span>模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
-                <div><span>时长</span><strong data-bind="currentDurationText">12秒</strong></div>
-                <div><span>路线</span><strong data-bind="styleRouteName">广告剧情</strong></div>
+                <div><span>当前集</span><strong data-bind="activeEpisodeTitle">EP01</strong></div>
+                <div><span>本集故事板</span><strong data-bind="activeEpisodeSegmentText">5 张</strong></div>
+                <div><span>状态</span><strong data-bind="storyboardPreviewStatus">待预生成</strong></div>
               </div>
 
               <div class="storyboard-canvas">
@@ -416,15 +457,11 @@
             <aside class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>投放变体</h2>
-                  <p>同一商品批量生成不同钩子。</p>
+                  <h2>当前集剧情</h2>
+                  <p>故事发展先看清，再批量生成视频。</p>
                 </div>
               </div>
-              <div class="input-stack">
-                <div>冲突钩子：明天见前任，今晚皮肤翻车。</div>
-                <div>测评钩子：半边脸试用，第二天对比。</div>
-                <div>口播钩子：别再只靠遮瑕救急。</div>
-              </div>
+              <div class="input-stack" id="activeEpisodeBeats"></div>
             </aside>
           </section>
         </section>
@@ -434,8 +471,8 @@
             <article class="panel">
               <div class="panel-head">
                 <div>
-                  <h2>批量生成</h2>
-                  <p>默认生成 24 条素材，覆盖 3 个钩子、2 个场景、4 个脚本角度。</p>
+                  <h2>生成</h2>
+                  <p>按故事板生成视频：一张故事板对应一条 12 秒或 15 秒视频。</p>
                 </div>
                 <button class="primary locked-action" data-open-submit>提交生成</button>
               </div>
@@ -472,7 +509,8 @@
               <div class="billing-box">
                 <div class="bill-line"><span>商品</span><strong data-bind="productName">晚安修护精华</strong></div>
                 <div class="bill-line"><span>模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
-                <div class="bill-line"><span>素材数</span><strong data-bind="selectedSegmentCount">24 条</strong></div>
+                <div class="bill-line"><span>剧集结构</span><strong data-bind="seriesStructureText">6 集 × 60 秒</strong></div>
+                <div class="bill-line"><span>故事板数</span><strong data-bind="selectedSegmentCount">6 张</strong></div>
                 <div class="bill-line"><span>预计消耗</span><strong data-bind="estimatedCost">3,600 点</strong></div>
                 <div class="bill-line"><span>提交后余额</span><strong data-bind="remainingBalance">0 创作点</strong></div>
               </div>
@@ -544,7 +582,8 @@
           <div><span>语言模型</span><strong data-bind="selectedTextModel">DeepSeek</strong></div>
           <div><span>图片模型</span><strong data-bind="selectedImageModel">GPT Image2</strong></div>
           <div><span>视频模型</span><strong data-bind="selectedVideoModel">Sora2</strong></div>
-          <div><span>素材数</span><strong data-bind="selectedSegmentCount">24 条</strong></div>
+          <div><span>剧集结构</span><strong data-bind="seriesStructureText">6 集 × 60 秒</strong></div>
+          <div><span>故事板数</span><strong data-bind="selectedSegmentCount">6 张</strong></div>
           <div><span>预计消耗</span><strong data-bind="estimatedCost">3,600 点</strong></div>
           <div><span>提交后余额</span><strong data-bind="remainingBalance">0 创作点</strong></div>
         </div>
