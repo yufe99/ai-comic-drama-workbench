@@ -173,7 +173,8 @@ function episodeSummary(index) {
 }
 
 function mockProductFromUrl(url) {
-  const isSerum = /serum|repair|night/i.test(url);
+  const normalizedUrl = (url || "").trim();
+  const isSerum = /serum|repair|night|精华|护肤|beauty|skincare/i.test(normalizedUrl);
   if (isSerum) {
     return {
       name: "晚安修护精华",
@@ -184,7 +185,7 @@ function mockProductFromUrl(url) {
   }
   return {
     name: "剧情植入商品",
-    brief: "根据商品链接自动提炼出的商品简介会同步到这里；正式版会调用商品解析接口抓取标题、主图、卖点和详情页素材。",
+    brief: `已从链接导入基础商品资料：${normalizedUrl || "未填写链接"}。正式版会调用商品解析接口抓取标题、主图、卖点和详情页素材；当前可在这里继续手工补充卖点、禁忌词和使用场景。`,
     brand: "请补充品牌调性、禁用词、功效边界和必须露出的商品信息。",
     image: "./assets/preview/litmedia-submit-panel.png"
   };
@@ -507,19 +508,21 @@ seriesPremiseInput.addEventListener("input", (event) => {
 });
 
 importProductButton.addEventListener("click", (event) => {
-  if (requireRecharge(event)) return;
+  event.preventDefault();
+  state.productUrl = productUrlInput.value.trim();
   state.importMode = "mixed";
   importModeSelect.value = "mixed";
+  importProductButton.textContent = "已导入";
   syncImportedProduct(mockProductFromUrl(state.productUrl));
 });
 
 previewScriptButton.addEventListener("click", (event) => {
-  if (requireRecharge(event)) return;
+  event.preventDefault();
   scriptInput.value = buildScriptPreview();
 });
 
 regenerateScriptButton.addEventListener("click", (event) => {
-  if (requireRecharge(event)) return;
+  event.preventDefault();
   scriptInput.value = `${buildScriptPreview()}
 
 新版钩子：女主在关键场合前被对手当众轻视，她没有解释，只在深夜完成自己的固定仪式。第二天，她用一份提前准备的证据完成反击。`;
@@ -571,7 +574,7 @@ document.querySelector("#confirmSubmit").addEventListener("click", () => {
 });
 
 document.querySelector("#refreshSegments").addEventListener("click", (event) => {
-  if (requireRecharge(event)) return;
+  event.preventDefault();
   alert(`已按 ${state.episodeCount} 集 × ${state.episodeDuration} 秒，重新拆分为 ${totalStoryboardCount()} 张故事板。`);
 });
 
@@ -589,31 +592,31 @@ document.querySelector("#removeEpisodeButton").addEventListener("click", () => {
 });
 
 document.querySelector("#generateAssetPreview").addEventListener("click", (event) => {
-  if (requireRecharge(event)) return;
+  event.preventDefault();
   state.assetPreviewStatus = "资产预览已生成";
   renderAll();
 });
 
 document.querySelector("#generateStoryboardPreview").addEventListener("click", (event) => {
-  if (requireRecharge(event)) return;
+  event.preventDefault();
   state.storyboardPreviewStatus = `${episodeTitle(state.activeEpisodeIndex)} 故事板已生成`;
   renderAll();
 });
 
 document.querySelector("#consentAction").addEventListener("click", (event) => {
-  if (requireRecharge(event)) return;
+  event.preventDefault();
   state.seedancePipelineStatus = "授权中";
   renderAll();
 });
 
 document.querySelector("#probeAction").addEventListener("click", (event) => {
-  if (requireRecharge(event)) return;
+  event.preventDefault();
   state.seedancePipelineStatus = "通道已通过";
   renderAll();
 });
 
 document.querySelector("#assetAction").addEventListener("click", (event) => {
-  if (requireRecharge(event)) return;
+  event.preventDefault();
   state.seedancePipelineStatus = "专用脸已生成";
   renderAll();
 });

@@ -48,7 +48,7 @@
             <p id="viewSubtitle">把商品资料、品牌禁忌和目标人群，变成连续爽剧、角色资产、故事板和自然植入的视频素材。</p>
           </div>
           <div class="top-actions">
-            <button class="secondary locked-action" data-locked-action>导入商品</button>
+            <button class="secondary" data-view="product">导入商品</button>
             <button class="secondary">查看示例</button>
             <button class="primary locked-action" data-open-submit>提交生成</button>
           </div>
@@ -117,7 +117,7 @@
                   <h2>资料导入</h2>
                   <p>可填商品链接，也可手工输入商品、简介、品牌资料和禁忌。系统先展开连续爽剧，再把商品自然放进故事。</p>
                 </div>
-                <button class="secondary locked-action" id="importProductButton" data-locked-action>一键导入</button>
+                <button class="secondary" id="importProductButton">一键导入</button>
               </div>
               <div class="form-grid">
                 <label class="field">
@@ -302,7 +302,7 @@
                   <h2>剧集脚本</h2>
                   <p>先定单集或连续剧，再按剧情需要拆成故事板；一张故事板生成一条 12/15 秒视频。</p>
                 </div>
-                <button class="secondary locked-action" id="refreshSegments" data-locked-action>重新生成脚本</button>
+                <button class="secondary" id="refreshSegments">重新生成脚本</button>
               </div>
               <div class="form-grid compact-form">
                 <label class="field">
@@ -340,8 +340,8 @@
                 </label>
               </div>
               <div class="guard-actions script-actions">
-                <button class="secondary locked-action" id="previewScriptButton" data-locked-action>预览脚本</button>
-                <button class="secondary locked-action" id="regenerateScriptButton" data-locked-action>重新生成</button>
+                <button class="secondary" id="previewScriptButton">预览脚本</button>
+                <button class="secondary" id="regenerateScriptButton">重新生成</button>
               </div>
               <textarea id="scriptInput">女主第二天要见前任，镜子里却看到熬夜暗沉和卡粉。闺蜜把晚安修护精华推到她面前：别遮了，今晚先把状态救回来。镜头切到质地推开、睡前使用、第二天自然光下皮肤变亮。女主收到前任消息，低声说：这次不用躲镜头了。</textarea>
             </article>
@@ -370,7 +370,7 @@
                   <h2>全剧资产</h2>
                   <p>先生成资产预览，再进入全剧视频生成。</p>
                 </div>
-                <button class="secondary locked-action" id="generateAssetPreview" data-locked-action>预生成资产</button>
+                <button class="secondary" id="generateAssetPreview">预生成资产</button>
               </div>
               <div class="upload-panel">
                 <label class="field">
@@ -419,7 +419,7 @@
                   <p>先看当前集故事板，再决定是否进入全剧生成。</p>
                 </div>
                 <div class="guard-actions">
-                  <button class="secondary locked-action" id="generateStoryboardPreview" data-locked-action>预生成故事板</button>
+                  <button class="secondary" id="generateStoryboardPreview">预生成故事板</button>
                   <button class="primary locked-action" data-locked-action>导出 PNG</button>
                 </div>
               </div>
@@ -491,9 +491,9 @@
               <div class="model-guard compact">
                 <strong>真人脸与商品一致性</strong>
                 <div class="guard-actions">
-                  <button class="secondary locked-action" id="consentAction" data-locked-action>授权</button>
-                  <button class="secondary locked-action" id="probeAction" data-locked-action>探测</button>
-                  <button class="secondary locked-action" id="assetAction" data-locked-action>专用脸</button>
+                  <button class="secondary" id="consentAction">授权</button>
+                  <button class="secondary" id="probeAction">探测</button>
+                  <button class="secondary" id="assetAction">专用脸</button>
                   <button class="secondary" id="fallbackAction">兜底</button>
                 </div>
               </div>
