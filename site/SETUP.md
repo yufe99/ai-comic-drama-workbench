@@ -6,20 +6,15 @@
 
 - `APP_SECRET`
 - `RECHARGE_CODES`
-- `SORA2_API_URL`
-- `SORA2_API_KEY`
-- `SEEDANCE_API_URL`
-- `SEEDANCE_API_KEY`
-- `DEEPSEEK_API_URL`
-- `DEEPSEEK_API_KEY`
-- `ZHIPU_API_URL`
-- `ZHIPU_API_KEY`
-- `GPT_IMAGE2_API_URL`
-- `GPT_IMAGE2_API_KEY`
-- `NANA_BANANA_2_API_URL`
-- `NANA_BANANA_2_API_KEY`
-- `NANA_BANANA_PRO_API_URL`
-- `NANA_BANANA_PRO_API_KEY`
+- `GEEKNOW_API_BASE_URL`
+- `GEEKNOW_API_KEY`
+- `GEEKNOW_DEEPSEEK_MODEL`
+- `GEEKNOW_ZHIPU_MODEL`
+- `GEEKNOW_GPT_IMAGE2_MODEL`
+- `GEEKNOW_NANA_BANANA_2_MODEL`
+- `GEEKNOW_NANA_BANANA_PRO_MODEL`
+- `GEEKNOW_SORA2_MODEL`
+- `GEEKNOW_SEEDANCE_MODEL`
 
 `RECHARGE_CODES` 示例：
 
@@ -41,6 +36,17 @@
 - `GET /api/config`
 - `POST /api/recharge`
 - `POST /api/generate`
+
+## 3.1 Geeknow 中转
+
+所有模型统一走 Geeknow：
+
+- 控制台：`https://www.geeknow.top/console`
+- Base URL：`https://www.geeknow.top`
+- 文本：`POST /v1/chat/completions`
+- 图片：`POST /v1/images/generations`
+- 视频：`POST /v1/videos`
+- 鉴权：`Authorization: Bearer $GEEKNOW_API_KEY`
 
 ## 4. 当前逻辑
 

@@ -1,23 +1,13 @@
 APP_SECRET=replace-with-random-secret
 RECHARGE_CODES={"TEST100":"10000","VIP500":"50000"}
 
-SORA2_API_URL=https://example.com/sora2/generate
-SORA2_API_KEY=replace-me
+GEEKNOW_API_BASE_URL=https://www.geeknow.top
+GEEKNOW_API_KEY=replace-me
 
-SEEDANCE_API_URL=https://example.com/seedance2/generate
-SEEDANCE_API_KEY=replace-me
-
-DEEPSEEK_API_URL=https://example.com/deepseek/chat
-DEEPSEEK_API_KEY=replace-me
-
-ZHIPU_API_URL=https://example.com/zhipu/chat
-ZHIPU_API_KEY=replace-me
-
-GPT_IMAGE2_API_URL=https://example.com/gpt-image2/generate
-GPT_IMAGE2_API_KEY=replace-me
-
-NANA_BANANA_2_API_URL=https://example.com/nana-banana-2/generate
-NANA_BANANA_2_API_KEY=replace-me
-
-NANA_BANANA_PRO_API_URL=https://example.com/nana-banana-pro/generate
-NANA_BANANA_PRO_API_KEY=replace-me
+GEEKNOW_DEEPSEEK_MODEL=deepseek-v4-flash
+GEEKNOW_ZHIPU_MODEL=glm-4.6
+GEEKNOW_GPT_IMAGE2_MODEL=gpt-image-2
+GEEKNOW_NANA_BANANA_2_MODEL=nano-banana-2
+GEEKNOW_NANA_BANANA_PRO_MODEL=nano-banana-pro
+GEEKNOW_SORA2_MODEL=sora-2
+GEEKNOW_SEEDANCE_MODEL=seedance-2.0

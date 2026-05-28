@@ -86,6 +86,14 @@ export async function onRequestPost({ request, env }) {
     seriesPremise: body.seriesPremise || "",
     output_format: "json"
   });
+  if (!llmResult.ok) {
+    return json({
+      ok: false,
+      error: "剧集圣经生成失败，未扣点。",
+      job,
+      provider: llmResult
+    }, 502);
+  }
 
   const imageResult = await callProvider(env, imageModel, {
     task: "storyboard_reference_image",
@@ -94,6 +102,24 @@ export async function onRequestPost({ request, env }) {
     styleRoute: body.styleRoute,
     instruction: "生成连续爽剧风格故事板参考图，商品以道具和生活场景自然出现，不做硬广海报。"
   });
+  if (!imageResult.ok) {
+    return json({
+      ok: false,
+      error: "故事板参考图生成失败，未扣点。",
+      job,
+      providers: {
+        llm: llmResult,
+        image: imageResult
+      }
+    }, 502);
+  }
+
+  const referenceImage =
+    imageResult?.data?.url ||
+    imageResult?.data?.image_url ||
+    imageResult?.data?.data?.[0]?.url ||
+    imageResult?.data?.data?.[0]?.b64_json ||
+    null;
 
   const videoResult = await callProvider(env, videoModel, {
     task: "video_generation",
@@ -102,8 +128,20 @@ export async function onRequestPost({ request, env }) {
     script: body.script || "",
     storyboard: body.storyboard || null,
     placementRules: body.placementRules || "",
-    referenceImage: imageResult?.data?.url || imageResult?.data?.image_url || null
+    referenceImage
   });
+  if (!videoResult.ok) {
+    return json({
+      ok: false,
+      error: "视频任务提交失败，未扣点。",
+      job,
+      providers: {
+        llm: llmResult,
+        image: imageResult,
+        video: videoResult
+      }
+    }, 502);
+  }
 
   const updatedWallet = { ...wallet, balance: wallet.balance - cost, lastJobId: job.jobId };
 

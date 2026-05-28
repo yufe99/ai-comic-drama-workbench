@@ -5,41 +5,47 @@ export const modelCatalog = {
     type: "video",
     duration: 12,
     cost: 150,
-    keyEnv: "SORA2_API_KEY",
-    urlEnv: "SORA2_API_URL"
+    modelEnv: "GEEKNOW_SORA2_MODEL",
+    defaultModel: "sora-2"
   },
   Seedance2: {
     type: "video",
     duration: 15,
     cost: 1800,
-    keyEnv: "SEEDANCE_API_KEY",
-    urlEnv: "SEEDANCE_API_URL"
+    modelEnv: "GEEKNOW_SEEDANCE_MODEL",
+    defaultModel: "seedance-2.0"
   },
   DeepSeek: {
     type: "llm",
-    keyEnv: "DEEPSEEK_API_KEY",
-    urlEnv: "DEEPSEEK_API_URL"
+    modelEnv: "GEEKNOW_DEEPSEEK_MODEL",
+    defaultModel: "deepseek-v4-flash"
   },
   Zhipu: {
     type: "llm",
-    keyEnv: "ZHIPU_API_KEY",
-    urlEnv: "ZHIPU_API_URL"
+    modelEnv: "GEEKNOW_ZHIPU_MODEL",
+    defaultModel: "glm-4.6"
   },
   GPTImage2: {
     type: "image",
-    keyEnv: "GPT_IMAGE2_API_KEY",
-    urlEnv: "GPT_IMAGE2_API_URL"
+    modelEnv: "GEEKNOW_GPT_IMAGE2_MODEL",
+    defaultModel: "gpt-image-2"
   },
   NanaBanana2: {
     type: "image",
-    keyEnv: "NANA_BANANA_2_API_KEY",
-    urlEnv: "NANA_BANANA_2_API_URL"
+    modelEnv: "GEEKNOW_NANA_BANANA_2_MODEL",
+    defaultModel: "nano-banana-2"
   },
   NanaBananaPro: {
     type: "image",
-    keyEnv: "NANA_BANANA_PRO_API_KEY",
-    urlEnv: "NANA_BANANA_PRO_API_URL"
+    modelEnv: "GEEKNOW_NANA_BANANA_PRO_MODEL",
+    defaultModel: "nano-banana-pro"
   }
+};
+
+const endpointByType = {
+  llm: "/v1/chat/completions",
+  image: "/v1/images/generations",
+  video: "/v1/videos"
 };
 
 export function json(data, status = 200) {
@@ -135,9 +141,66 @@ export function missingProvider(env, modelId) {
   const config = modelCatalog[modelId];
   if (!config) return [`unknown model: ${modelId}`];
   const missing = [];
-  if (!env[config.keyEnv]) missing.push(config.keyEnv);
-  if (!env[config.urlEnv]) missing.push(config.urlEnv);
+  if (!env.GEEKNOW_API_KEY) missing.push("GEEKNOW_API_KEY");
   return missing;
+}
+
+function getGeeknowBaseUrl(env) {
+  return (env.GEEKNOW_API_BASE_URL || "https://www.geeknow.top").replace(/\/+$/, "");
+}
+
+function getProviderModel(env, config) {
+  return env[config.modelEnv] || config.defaultModel;
+}
+
+function toPrompt(payload) {
+  return [
+    payload.instruction,
+    payload.prompt,
+    payload.script ? `Script:\n${payload.script}` : "",
+    payload.productBrief ? `Product brief:\n${payload.productBrief}` : "",
+    payload.brandBrief ? `Brand brief:\n${payload.brandBrief}` : "",
+    payload.placementRules ? `Placement rules:\n${payload.placementRules}` : "",
+    payload.seriesPremise ? `Series premise:\n${payload.seriesPremise}` : "",
+    payload.job ? `Job:\n${JSON.stringify(payload.job)}` : "",
+    payload.storyboard ? `Storyboard:\n${JSON.stringify(payload.storyboard)}` : ""
+  ].filter(Boolean).join("\n\n");
+}
+
+function buildProviderBody(env, config, payload) {
+  const model = getProviderModel(env, config);
+  const prompt = toPrompt(payload);
+
+  if (config.type === "llm") {
+    return {
+      model,
+      messages: [
+        {
+          role: "system",
+          content: "你是品牌连续爽剧编剧和AI视频制片人。先保证故事好看、人物关系成立、爽点清晰，再把商品作为自然道具或生活习惯植入，避免硬广口播。输出结构化 JSON。"
+        },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.7
+    };
+  }
+
+  if (config.type === "image") {
+    return {
+      model,
+      prompt,
+      n: 1,
+      size: payload.size || "1536x1024"
+    };
+  }
+
+  return {
+    model,
+    prompt,
+    duration: payload.job?.duration || config.duration || 12,
+    aspect_ratio: payload.aspect_ratio || "9:16",
+    reference_image: payload.referenceImage || undefined
+  };
 }
 
 export async function callProvider(env, modelId, payload) {
@@ -153,13 +216,14 @@ export async function callProvider(env, modelId, payload) {
     };
   }
 
-  const response = await fetch(env[config.urlEnv], {
+  const url = `${getGeeknowBaseUrl(env)}${endpointByType[config.type]}`;
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      authorization: `Bearer ${env[config.keyEnv]}`
+      authorization: `Bearer ${env.GEEKNOW_API_KEY}`
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(buildProviderBody(env, config, payload))
   });
 
   const text = await response.text();
@@ -174,6 +238,9 @@ export async function callProvider(env, modelId, payload) {
     ok: response.ok,
     status: response.status,
     modelId,
+    provider: "geeknow",
+    endpoint: endpointByType[config.type],
+    model: getProviderModel(env, config),
     data
   };
 }
